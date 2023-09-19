@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{8A405C10-D743-32F2-D79E-CA461F443E73}</ProjectGuid>
+    <ProjectGuid>{F3E42823-A72D-5724-4F3C-66AD556348EB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp-Editor</AssemblyName>
@@ -879,27 +879,27 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp.csproj">
-      <Project>{AB7C93C2-DF49-F459-2B79-FFEE911CE069}</Project>
+      <Project>{FAD74C08-0551-2B2A-EC06-FF6C4EF3CC6B}</Project>
       <Name>Assembly-CSharp</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.XR.Interaction.Toolkit.Samples.Hands.Editor.csproj">
-      <Project>{3681C0DB-9BAE-7CF6-B838-666A7EC8D5C3}</Project>
+      <Project>{125A4809-8E9C-CF2D-559C-3B3B32E13BD1}</Project>
       <Name>Unity.XR.Interaction.Toolkit.Samples.Hands.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.XR.Interaction.Toolkit.Samples.Hands.csproj">
-      <Project>{6D9A0180-EC2C-0823-DE74-B93E534871A8}</Project>
+      <Project>{3852384D-C155-34EC-5220-DA5935B5C05E}</Project>
       <Name>Unity.XR.Interaction.Toolkit.Samples.Hands</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.XR.Interaction.Toolkit.Samples.StarterAssets.Editor.csproj">
-      <Project>{E03CA770-213E-7B1E-B4BD-FC084D504408}</Project>
+      <Project>{9EE66014-42B2-8930-35A9-906347EF7711}</Project>
       <Name>Unity.XR.Interaction.Toolkit.Samples.StarterAssets.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.XR.Hands.Samples.VisualizerSample.csproj">
-      <Project>{74BB8C30-6698-3BC0-A2D5-D7130B07C163}</Project>
+      <Project>{8D0C8271-C062-651D-52AC-027E7170356F}</Project>
       <Name>Unity.XR.Hands.Samples.VisualizerSample</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.XR.Interaction.Toolkit.Samples.StarterAssets.csproj">
-      <Project>{AA80C21E-AB52-0ADD-FB33-FFD9103C748D}</Project>
+      <Project>{E996A5F4-8783-2D4D-9791-612F2A2B015C}</Project>
       <Name>Unity.XR.Interaction.Toolkit.Samples.StarterAssets</Name>
     </ProjectReference>
   </ItemGroup>
