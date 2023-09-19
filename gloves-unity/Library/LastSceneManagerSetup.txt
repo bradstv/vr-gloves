@@ -1,0 +1,5 @@
+sceneSetups:
+- path: Assets/Samples/XR Interaction Toolkit/2.4.3/Hands Interaction Demo/Runtime/HandsDemoScene.unity
+  isLoaded: 1
+  isActive: 1
+  isSubScene: 0
