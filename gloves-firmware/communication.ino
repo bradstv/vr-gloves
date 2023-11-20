@@ -1,6 +1,6 @@
-bool comIsOpen;
+bool comIsOpen = false;
 
-bool isComOpen()
+bool comOpen()
 {
     return comIsOpen;
 }

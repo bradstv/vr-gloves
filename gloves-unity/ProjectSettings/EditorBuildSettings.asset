@@ -4,7 +4,10 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Interactions_Example.unity
+    guid: e3b77830391f10343929883b18f4d5ae
   m_configObjects:
-    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 6e25bb04d2600c04db04569180ac24c7, type: 2}
-    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: f2eecf6f74854d142a0d773637275c84, type: 2}
+    Unity.XR.OpenVR.Settings: {fileID: 11400000, guid: d05dd979f9c0b154f93758012abfe0a6, type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 2a3cc2c39d281a24282cb27913ee93dc, type: 2}
