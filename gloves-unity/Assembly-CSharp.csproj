@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{D5DE3BF6-8755-E830-1807-86CDEACD80D8}</ProjectGuid>
+    <ProjectGuid>{FAD74C08-0551-2B2A-EC06-FF6C4EF3CC6B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -57,9 +57,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\FFBClient.cs" />
+    <Compile Include="Assets\Scripts\onHandUpdate.cs" />
     <Compile Include="Assets\Scripts\FFBManager.cs" />
     <Compile Include="Assets\Scripts\ObjectToggles.cs" />
-    <Compile Include="Assets\Scripts\onHandUpdate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -695,23 +695,23 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="SteamVR_Input_Editor.csproj">
-      <Project>{1573C4D9-275C-8088-9A7C-CBAB7093FB5E}</Project>
+      <Project>{959FD54D-34EE-904D-750A-AE7F8A14C3F3}</Project>
       <Name>SteamVR_Input_Editor</Name>
     </ProjectReference>
     <ProjectReference Include="SteamVR.csproj">
-      <Project>{2444E445-271F-7CBE-E509-E1A9302AF32C}</Project>
+      <Project>{85D09868-B8AD-8D4C-B422-5F92B5D1B323}</Project>
       <Name>SteamVR</Name>
     </ProjectReference>
     <ProjectReference Include="SteamVR_Windows_EditorHelper.csproj">
-      <Project>{D5F1A3B6-ECF7-CB69-498A-76E28679CA16}</Project>
+      <Project>{D1EE8096-0722-9CC1-3B3E-794E49FFAF29}</Project>
       <Name>SteamVR_Windows_EditorHelper</Name>
     </ProjectReference>
     <ProjectReference Include="SteamVR_Editor.csproj">
-      <Project>{B7ECB9AD-AA97-BD16-9A29-9932A288CD66}</Project>
+      <Project>{EE4D9327-DFB3-952C-F8AA-0EFD3D7B4C5D}</Project>
       <Name>SteamVR_Editor</Name>
     </ProjectReference>
     <ProjectReference Include="SteamVR_Actions.csproj">
-      <Project>{2C305E27-1B19-5125-B432-A884128C3912}</Project>
+      <Project>{F0D95B34-19A2-7FED-11B6-1D781A196EAA}</Project>
       <Name>SteamVR_Actions</Name>
     </ProjectReference>
   </ItemGroup>

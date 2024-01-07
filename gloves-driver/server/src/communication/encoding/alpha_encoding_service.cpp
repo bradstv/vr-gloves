@@ -82,6 +82,12 @@ static const std::map<AlphaEncodingKey, std::string> alpha_encoding_output_key_s
     {kAlphaEncodingKey_OutHapticAmplitude, "H"},  // haptic vibration amplitude
 
     {kAlphaEncodingKey_ThermoValue, "I"},  // thermo heat/cooling value
+
+    {kAlphaEncodingKey_ThumbBuzzer, "J"},   // thumb haptic feedback
+    {kAlphaEncodingKey_IndexBuzzer, "K"},   // index haptic feedback
+    {kAlphaEncodingKey_MiddleBuzzer, "L"},  // middle haptic feedback
+    {kAlphaEncodingKey_RingBuzzer, "M"},    // ring haptic feedback
+    {kAlphaEncodingKey_PinkyBuzzer, "N"},   // pinky haptic feedback
 };
 
 static const std::string alpha_encoding_key_characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ()";
@@ -315,6 +321,23 @@ std::string AlphaEncodingService::EncodePacket(const og::Output& output) {
           "%s%d%\n", 
           alpha_encoding_output_key_strings.at(kAlphaEncodingKey_ThermoValue).c_str(),
           data.value);
+    }
+
+    case og::kOutputData_Type_HapticFeedback: {
+      const og::OutputHapticFeedbackData& data = output.data.haptic_feedback_data;
+
+      return StringFormat(
+          "%s%d%s%d%s%d%s%d%s%d\n",
+          alpha_encoding_output_key_strings.at(kAlphaEncodingKey_ThumbHaptic).c_str(),
+          data.thumb,
+          alpha_encoding_output_key_strings.at(kAlphaEncodingKey_IndexHaptic).c_str(),
+          data.index,
+          alpha_encoding_output_key_strings.at(kAlphaEncodingKey_MiddleHaptic).c_str(),
+          data.middle,
+          alpha_encoding_output_key_strings.at(kAlphaEncodingKey_RingHaptic).c_str(),
+          data.ring,
+          alpha_encoding_output_key_strings.at(kAlphaEncodingKey_PinkyHaptic).c_str(),
+          data.pinky);
     }
 
     default:

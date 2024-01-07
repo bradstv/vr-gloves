@@ -37,6 +37,7 @@ public class onHandUpdate : MonoBehaviour
     private void OnTransformsUpdated(SteamVR_Behaviour_Skeleton skeleton, SteamVR_Input_Sources inputSource)
     {
         _ffbManager.SetThermoFeedbackFromSkeleton(hand, skeleton);
+        _ffbManager.SetHapticFeedbackFromSkeleton(hand, skeleton);
     }
 }
 

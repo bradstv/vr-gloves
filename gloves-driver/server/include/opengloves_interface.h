@@ -146,6 +146,13 @@ namespace og {
   struct OutputThermoFeedbackData {
     int16_t value;
   };
+  struct OutputHapticFeedbackData {
+    bool thumb;
+    bool index;
+    bool middle;
+    bool ring;
+    bool pinky;
+  };
   // haptic vibration output from server to device
   struct OutputHapticData {
     float duration;
@@ -162,13 +169,15 @@ namespace og {
     OutputHapticData haptic_data;
     OutputForceFeedbackData force_feedback_data;
     OutputThermoFeedbackData thermo_feedback_data;
+    OutputHapticFeedbackData haptic_feedback_data;
   };
   enum OutputDataType {
     kOutputDataType_Empty,
     kOutputDataType_FetchInfo,
     kOutputDataType_Haptic,
     kOutputData_Type_ForceFeedback,
-    kOutputData_Type_ThermoFeedback
+    kOutputData_Type_ThermoFeedback,
+    kOutputData_Type_HapticFeedback
   };
 
   // output data from driver to glove

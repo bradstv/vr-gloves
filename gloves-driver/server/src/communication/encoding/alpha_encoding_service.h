@@ -82,6 +82,12 @@ enum AlphaEncodingKey {
 
   kAlphaEncodingKey_ThermoValue,
 
+  kAlphaEncodingKey_ThumbHaptic,
+  kAlphaEncodingKey_IndexHaptic,
+  kAlphaEncodingKey_MiddleHaptic,
+  kAlphaEncodingKey_RingHaptic,
+  kAlphaEncodingKey_PinkyHaptic,
+
   kAlphaEncodingKey_Max
 };
 

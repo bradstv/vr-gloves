@@ -15,7 +15,7 @@ char* encodeData(int* flexion, bool triggerButton, bool grab, bool pinch)
     return stringToEncode;
 }
 
-void decodeData(char* stringToDecode, int* parsedThermo, int* parsedServo, bool* parsedBuzzer)
+void decodeData(char* stringToDecode, int* parsedThermo, int* parsedServo, int* parsedBuzzer)
 {
     //Check if a Z command was received
     if (strchr(stringToDecode, 'Z') != NULL) 

@@ -68,13 +68,18 @@ void writeThermo(int* parsedThermo)
     }
 }
 
-void writeBuzzers(bool* parsedBuzzer)
+void writeBuzzers(int* parsedBuzzer)
 {
-    digitalWrite(PIN_INDEX_BUZZER, parsedBuzzer[0]);
-    digitalWrite(PIN_MIDDLE_BUZZER, parsedBuzzer[1]);
-    digitalWrite(PIN_PINKY_BUZZER, parsedBuzzer[2]);
-    digitalWrite(PIN_RING_BUZZER, parsedBuzzer[3]);
-    digitalWrite(PIN_THUMB_BUZZER, parsedBuzzer[4]);
+    if(parsedBuzzer[0] != -1)
+        digitalWrite(PIN_INDEX_BUZZER, parsedBuzzer[0]);
+    if(parsedBuzzer[1] != -1)
+        digitalWrite(PIN_MIDDLE_BUZZER, parsedBuzzer[1]);
+    if(parsedBuzzer[2] != -1)
+        digitalWrite(PIN_PINKY_BUZZER, parsedBuzzer[2]);
+    if(parsedBuzzer[3] != -1)
+        digitalWrite(PIN_RING_BUZZER, parsedBuzzer[3]);
+    if(parsedBuzzer[4] != -1)
+        digitalWrite(PIN_THUMB_BUZZER, parsedBuzzer[4]);
 }
 
 

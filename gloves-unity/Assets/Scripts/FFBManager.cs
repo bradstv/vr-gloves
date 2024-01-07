@@ -1,8 +1,10 @@
+using Newtonsoft.Json.Bson;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +12,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Valve.VR;
 using Valve.VR.InteractionSystem;
+using static UnityEditor.PlayerSettings;
 
 public class FFBManager : MonoBehaviour
 {
@@ -18,8 +21,14 @@ public class FFBManager : MonoBehaviour
     private FFBProvider _ffbProviderLeft;
     private FFBProvider _ffbProviderRight;
 
+    private Coroutine hapticCoroutineLeft;
+    private Coroutine hapticCoroutineRight;
+
     private short thermoValueLeft = 0;
     private short thermoValueRight = 0;
+
+    private bool[] fingerHapticsLeft = new bool[] { false, false, false, false, false };
+    private bool[] fingerHapticsRight = new bool[] { false, false, false, false, false };
 
     public float thermoLoopTime = 1.0f;
 
@@ -66,6 +75,18 @@ public class FFBManager : MonoBehaviour
         else
         {
             _ffbProviderRight.SetTFB(input);
+        }
+    }
+
+    private void _SetHapticFeedback(ETrackedControllerRole controllerRole, VRHFBInput input)
+    {
+        if (controllerRole == ETrackedControllerRole.LeftHand)
+        {
+            _ffbProviderLeft.SetHFB(input);
+        }
+        else
+        {
+            _ffbProviderRight.SetHFB(input);
         }
     }
 
@@ -116,7 +137,8 @@ public class FFBManager : MonoBehaviour
 
         List<float>[] fingerCurlValues = new List<float>[5];
 
-        for (int i = 0; i < fingerCurlValues.Length; i++) fingerCurlValues[i] = new List<float>();
+        for (int i = 0; i < fingerCurlValues.Length; i++) 
+            fingerCurlValues[i] = new List<float>();
 
         for (int boneIndex = 0; boneIndex < skeleton.bonePositions.Length; boneIndex++)
         {
@@ -210,21 +232,166 @@ public class FFBManager : MonoBehaviour
         {
             thermoValueRight = tempThermoValue;
         }
+}
+
+    public void SetHapticFeedbackFromSkeleton(Hand hand, SteamVR_Behaviour_Skeleton skeleton)
+    {
+        bool[] fingerHaptics = new bool[5];
+        HandSkeletonBone[] fingerTips = new HandSkeletonBone[] { HandSkeletonBone.eBone_Thumb3, HandSkeletonBone.eBone_IndexFinger4, HandSkeletonBone.eBone_MiddleFinger4, HandSkeletonBone.eBone_RingFinger4, HandSkeletonBone.eBone_PinkyFinger4 };
+        for (int i = 0; i < fingerTips.Length; i++)
+        {
+            Vector3 position = skeleton.GetBonePosition((int)fingerTips[i]);
+            Collider[] colliders = Physics.OverlapSphere(position, 0.1f);
+            bool touchedValidObject = false;
+            foreach (Collider collider in colliders)
+            {
+                var touchedObject = collider.gameObject;
+                var objectToggle = touchedObject.GetComponent<ObjectToggles>();
+
+                if (objectToggle == null)
+                    continue;
+
+                if (!objectToggle.triggerHaptics)
+                    continue;
+
+                touchedValidObject = true;
+                break;
+            }
+
+            if(touchedValidObject)
+            {
+                fingerHaptics[i] = true;
+            }
+            else
+            {
+                fingerHaptics[i] = false;
+            }
+        }
+
+        bool[] fingerHapticChanges = new bool[5];
+        for (int i = 0; i < fingerHapticChanges.Length; i++)
+        {
+            if(hand.handType == SteamVR_Input_Sources.LeftHand)
+            {
+                if (fingerHaptics[i] && !fingerHapticsLeft[i])
+                {
+                    fingerHapticChanges[i] = true;
+                }
+                else
+                {
+                    fingerHapticChanges[i] = fingerHapticsLeft[i];
+                }
+            }
+            else
+            {
+                if (fingerHaptics[i] && !fingerHapticsRight[i])
+                {
+                    fingerHapticChanges[i] = true;
+                }
+                else
+                {
+                    fingerHapticChanges[i] = fingerHapticsRight[i];
+                }
+            }
+        }
+
+        if (hand.handType == SteamVR_Input_Sources.LeftHand)
+        {
+            if (!fingerHapticChanges.SequenceEqual(fingerHapticsLeft))
+            {
+                fingerHapticsLeft = fingerHapticChanges;
+                SetHapticsForFingers(ETrackedControllerRole.LeftHand, fingerHapticChanges);
+            }
+        }
+        else
+        {
+            if (!fingerHapticChanges.SequenceEqual(fingerHapticsRight))
+            {
+                fingerHapticsRight = fingerHapticChanges;
+                SetHapticsForFingers(ETrackedControllerRole.RightHand, fingerHapticChanges);
+            }
+        }
     }
 
-    private short mapDistance(float distance, float minDistance, float maxDistance, float minValue, float maxValue)
+    private void SetHapticsForFingers(ETrackedControllerRole controllerRole, bool[] fingerHaptics)
+    {
+        if(controllerRole == ETrackedControllerRole.LeftHand)
+        {
+            StopCoroutine(hapticCoroutineLeft);
+            hapticCoroutineLeft = StartCoroutine(hapticThread(controllerRole, fingerHaptics));
+        }
+        else
+        {
+            StopCoroutine(hapticCoroutineRight);
+            hapticCoroutineRight = StartCoroutine(hapticThread(controllerRole, fingerHaptics));
+        }
+    }
+
+    private IEnumerator hapticThread(ETrackedControllerRole controllerRole, bool[] fingerHaptics)
+    {
+        _SetHapticFeedback(controllerRole, new VRHFBInput(fingerHaptics[0], fingerHaptics[1], fingerHaptics[2], fingerHaptics[3], fingerHaptics[4]));
+        yield return new WaitForSeconds(0.5f);
+        _SetHapticFeedback(controllerRole, new VRHFBInput(false, false, false, false, false));
+    }
+
+    private short mapDistance(float distance, float minDistance, float maxDistance, short minValue, short maxValue)
     {
         if (distance < minDistance)
         {
-            return (short)minValue;
+            return minValue;
         }
 
         if (distance > maxDistance)
         {
-            return (short)maxValue;
+            return maxValue;
         }
 
         return (short)Mathf.Lerp(minValue, maxValue, Mathf.InverseLerp(minDistance, maxDistance, distance));
+    }
+
+    public enum HandSkeletonBone : int
+    {
+        eBone_Root = 0,
+        eBone_Wrist,
+        eBone_Thumb0,
+        eBone_Thumb1,
+        eBone_Thumb2,
+        eBone_Thumb3,
+        eBone_IndexFinger0,
+        eBone_IndexFinger1,
+        eBone_IndexFinger2,
+        eBone_IndexFinger3,
+        eBone_IndexFinger4,
+        eBone_MiddleFinger0,
+        eBone_MiddleFinger1,
+        eBone_MiddleFinger2,
+        eBone_MiddleFinger3,
+        eBone_MiddleFinger4,
+        eBone_RingFinger0,
+        eBone_RingFinger1,
+        eBone_RingFinger2,
+        eBone_RingFinger3,
+        eBone_RingFinger4,
+        eBone_PinkyFinger0,
+        eBone_PinkyFinger1,
+        eBone_PinkyFinger2,
+        eBone_PinkyFinger3,
+        eBone_PinkyFinger4,
+        eBone_Aux_Thumb,
+        eBone_Aux_IndexFinger,
+        eBone_Aux_MiddleFinger,
+        eBone_Aux_RingFinger,
+        eBone_Aux_PinkyFinger,
+        eBone_Count
+    }
+
+    public enum HandFingers : int
+    {
+        thumb = 0,
+        index, 
+        middle, 
+        ring, 
+        pinky
     }
 
     private void Stop()
@@ -272,6 +439,24 @@ public struct VRTFBInput
     public short value;
 };
 
+public struct VRHFBInput
+{
+
+    public VRHFBInput(bool thumbHaptic, bool indexHaptic, bool middleHaptic, bool ringHaptic, bool pinkyHaptic)
+    {
+        this.thumbHaptic = thumbHaptic;
+        this.indexHaptic = indexHaptic;
+        this.middleHaptic = middleHaptic;
+        this.ringHaptic = ringHaptic;
+        this.pinkyHaptic = pinkyHaptic;
+    }
+    public bool thumbHaptic;
+    public bool indexHaptic;
+    public bool middleHaptic;
+    public bool ringHaptic;
+    public bool pinkyHaptic;
+};
+
 class FFBProvider
 {
     private NamedPipesProvider _namedPipeProvider;
@@ -295,6 +480,11 @@ class FFBProvider
         return _namedPipeProvider.TFSend(input);
     }
 
+    public bool SetHFB(VRHFBInput input)
+    {
+        return _namedPipeProvider.HFSend(input);
+    }
+
     public void Close()
     {
         _namedPipeProvider.Disconnect();
@@ -305,10 +495,12 @@ class NamedPipesProvider
 {
     private NamedPipeClientStream forcePipe;
     private NamedPipeClientStream thermoPipe;
+    private NamedPipeClientStream hapticPipe;
     public NamedPipesProvider(ETrackedControllerRole controllerRole)
     {
         forcePipe = new NamedPipeClientStream("vrapplication/ffb/curl/" + (controllerRole == ETrackedControllerRole.RightHand ? "right" : "left"));
         thermoPipe = new NamedPipeClientStream("vrapplication/ffb/thermo/" + (controllerRole == ETrackedControllerRole.RightHand ? "right" : "left"));
+        hapticPipe = new NamedPipeClientStream("vrapplication/ffb/haptic/" + (controllerRole == ETrackedControllerRole.RightHand ? "right" : "left"));
     }
 
     public void Connect()
@@ -335,6 +527,17 @@ class NamedPipesProvider
             Debug.Log("Unable to connect to thermo pipe. Error: " + e);
         }
 
+        try
+        {
+            Debug.Log("Connecting to pipe: haptic");
+            hapticPipe.Connect();
+            Debug.Log("Successfully connected to pipe: haptic");
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Unable to connect to haptic pipe. Error: " + e);
+        }
+
     }
 
     public void Disconnect()
@@ -347,6 +550,11 @@ class NamedPipesProvider
         if (thermoPipe.IsConnected)
         {
             thermoPipe.Dispose();
+        }
+
+        if (hapticPipe.IsConnected)
+        {
+            hapticPipe.Dispose();
         }
     }
 
@@ -395,4 +603,28 @@ class NamedPipesProvider
 
         return false;
     }
+
+    public bool HFSend(VRHFBInput input)
+    {
+        if (hapticPipe.IsConnected)
+        {
+            Debug.Log("running task");
+            int size = Marshal.SizeOf(input);
+            byte[] arr = new byte[size];
+
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+            Marshal.StructureToPtr(input, ptr, true);
+            Marshal.Copy(ptr, arr, 0, size);
+            Marshal.FreeHGlobal(ptr);
+
+            hapticPipe.Write(arr, 0, size);
+
+            Debug.Log("Sent haptic feedback message.");
+
+            return true;
+        }
+
+        return false;
+    }
 }
+

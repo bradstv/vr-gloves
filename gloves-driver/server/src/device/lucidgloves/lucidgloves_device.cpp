@@ -9,6 +9,7 @@
 #include "opengloves_interface.h"
 #include "services/input/input_force_feedback_named_pipe.h"
 #include "services/input/input_thermo_feedback_named_pipe.h"
+#include "services/input/input_haptic_feedback_named_pipe.h"
 #include "services/output/output_osc.h"
 
 using namespace og;
@@ -40,13 +41,30 @@ class LucidglovesDevice::Impl {
           .type = og::kOutputData_Type_ThermoFeedback,
           .data = {
               .thermo_feedback_data = {
-                    .value = thermo_data.value
+                   .value = thermo_data.value
               }
           },
       };
 
       communication_manager_->WriteOutput(output);
     });
+
+    haptic_feedback_ = std::make_unique<InputHapticFeedbackNamedPipe>(hand_, [&](const HapticFeedbackData &haptic_data) {
+      const og::Output output = {
+          .type = og::kOutputData_Type_HapticFeedback,
+          .data = {
+            .haptic_feedback_data = {
+                .thumb = haptic_data.thumb,
+                .index = haptic_data.index,
+                .middle = haptic_data.middle,
+                .ring = haptic_data.ring,
+                .pinky = haptic_data.pinky
+            }
+          },
+      };
+
+      communication_manager_->WriteOutput(output);
+    })
   };
 
   void ListenForInput(std::function<void(const og::InputPeripheralData &)> callback) {
@@ -62,6 +80,7 @@ class LucidglovesDevice::Impl {
 
     force_feedback_->StartListener();
     thermo_feedback_->StartListener();
+    haptic_feedback_->StartListener();
   }
 
   void Output(const og::Output &output) {
@@ -71,6 +90,7 @@ class LucidglovesDevice::Impl {
   ~Impl() {
     force_feedback_ = nullptr;
     thermo_feedback_ = nullptr;
+    haptic_feedback_ = nullptr;
     communication_manager_ = nullptr;
   }
 
@@ -81,6 +101,7 @@ class LucidglovesDevice::Impl {
   std::unique_ptr<ICommunicationManager> communication_manager_;
   std::unique_ptr<InputForceFeedbackNamedPipe> force_feedback_;
   std::unique_ptr<InputThermoFeedbackNamedPipe> thermo_feedback_;
+  std::unique_ptr<InputHapticFeedbackNamedPipe> haptic_feedback_;
 };
 
 LucidglovesDevice::LucidglovesDevice(og::DeviceConfiguration configuration, std::unique_ptr<ICommunicationManager> communication_manager)
