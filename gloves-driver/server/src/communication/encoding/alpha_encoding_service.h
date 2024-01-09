@@ -80,6 +80,8 @@ enum AlphaEncodingKey {
   kAlphaEncodingKey_OutHapticDuration,
   kAlphaEncodingKey_OutHapticAmplitude,
 
+  kAlphaEncodingKey_Max,
+
   kAlphaEncodingKey_ThermoValue,
 
   kAlphaEncodingKey_ThumbHaptic,
@@ -87,8 +89,6 @@ enum AlphaEncodingKey {
   kAlphaEncodingKey_MiddleHaptic,
   kAlphaEncodingKey_RingHaptic,
   kAlphaEncodingKey_PinkyHaptic,
-
-  kAlphaEncodingKey_Max
 };
 
 class AlphaEncodingService : public IEncodingService {

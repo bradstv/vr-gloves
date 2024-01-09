@@ -58,7 +58,7 @@ void LucidglovesDeviceDiscoverer::StartDiscovery(std::function<void(std::unique_
     logger.Log(og::kLoggerLevel_Info, "Not probing for bluetooth devices as it was disabled in settings");
   }
 
-  //if (communication_configuration_.serial.enabled) {
+  //communication_configuration_.serial.enabled
   if (true) {
     logger.Log(og::kLoggerLevel_Info, "Setting up serial probers...");
 

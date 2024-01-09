@@ -27,8 +27,8 @@ public class FFBManager : MonoBehaviour
     private short thermoValueLeft = 0;
     private short thermoValueRight = 0;
 
-    private bool[] fingerHapticsLeft = new bool[] { false, false, false, false, false };
-    private bool[] fingerHapticsRight = new bool[] { false, false, false, false, false };
+    private short[] fingerHapticsLeft = new short[] { 0, 0, 0, 0, 0 };
+    private short[] fingerHapticsRight = new short[] { 0, 0, 0, 0, 0 };
 
     public float thermoLoopTime = 1.0f;
 
@@ -175,7 +175,7 @@ public class FFBManager : MonoBehaviour
             //The value we to pass is where 0 is full movement flexibility, so invert.
             fingerCurlAverages[i] = Convert.ToInt16(1000 - (Mathf.FloorToInt(enumerator / fingerCurlValues[i].Count * 1000)));
 
-            Debug.Log(fingerCurlAverages[i]);
+            //Debug.Log(fingerCurlAverages[i]);
         }
 
         _SetForceFeedback(hand, new VRFFBInput(fingerCurlAverages[0], fingerCurlAverages[1], fingerCurlAverages[2], fingerCurlAverages[3], fingerCurlAverages[4]));
@@ -236,13 +236,14 @@ public class FFBManager : MonoBehaviour
 
     public void SetHapticFeedbackFromSkeleton(Hand hand, SteamVR_Behaviour_Skeleton skeleton)
     {
-        bool[] fingerHaptics = new bool[5];
+        short[] fingerHaptics = new short[5];
+        bool anyFingerStartedTouching = false;
         HandSkeletonBone[] fingerTips = new HandSkeletonBone[] { HandSkeletonBone.eBone_Thumb3, HandSkeletonBone.eBone_IndexFinger4, HandSkeletonBone.eBone_MiddleFinger4, HandSkeletonBone.eBone_RingFinger4, HandSkeletonBone.eBone_PinkyFinger4 };
         for (int i = 0; i < fingerTips.Length; i++)
         {
             Vector3 position = skeleton.GetBonePosition((int)fingerTips[i]);
-            Collider[] colliders = Physics.OverlapSphere(position, 0.1f);
-            bool touchedValidObject = false;
+            Collider[] colliders = Physics.OverlapSphere(position, 0.05f);
+            short hapticTime = 0;
             foreach (Collider collider in colliders)
             {
                 var touchedObject = collider.gameObject;
@@ -254,84 +255,33 @@ public class FFBManager : MonoBehaviour
                 if (!objectToggle.triggerHaptics)
                     continue;
 
-                touchedValidObject = true;
+                hapticTime = objectToggle.hapticTime;
                 break;
             }
+            fingerHaptics[i] = hapticTime;
 
-            if(touchedValidObject)
+            if (hand.handType == SteamVR_Input_Sources.LeftHand)
             {
-                fingerHaptics[i] = true;
+                if (fingerHaptics[i] != fingerHapticsLeft[i] && fingerHaptics[i] != 0)
+                    anyFingerStartedTouching = true;
+
+                fingerHapticsLeft[i] = fingerHaptics[i];
             }
             else
             {
-                fingerHaptics[i] = false;
+                if (fingerHaptics[i] != fingerHapticsRight[i] && fingerHaptics[i] != 0)
+                    anyFingerStartedTouching = true;
+
+                fingerHapticsRight[i] = fingerHaptics[i];
             }
         }
 
-        bool[] fingerHapticChanges = new bool[5];
-        for (int i = 0; i < fingerHapticChanges.Length; i++)
+        if(anyFingerStartedTouching)
         {
-            if(hand.handType == SteamVR_Input_Sources.LeftHand)
-            {
-                if (fingerHaptics[i] && !fingerHapticsLeft[i])
-                {
-                    fingerHapticChanges[i] = true;
-                }
-                else
-                {
-                    fingerHapticChanges[i] = fingerHapticsLeft[i];
-                }
-            }
-            else
-            {
-                if (fingerHaptics[i] && !fingerHapticsRight[i])
-                {
-                    fingerHapticChanges[i] = true;
-                }
-                else
-                {
-                    fingerHapticChanges[i] = fingerHapticsRight[i];
-                }
-            }
+            Debug.Log("Haptics set: " + fingerHaptics[0] + ", " + fingerHaptics[1] + ", " + fingerHaptics[2] + ", " + fingerHaptics[3] + ", " + fingerHaptics[4]);
+            _SetHapticFeedback(hand.handType == SteamVR_Input_Sources.LeftHand ? ETrackedControllerRole.LeftHand : ETrackedControllerRole.RightHand,
+                new VRHFBInput(fingerHaptics[0], fingerHaptics[1], fingerHaptics[2], fingerHaptics[3], fingerHaptics[4]));
         }
-
-        if (hand.handType == SteamVR_Input_Sources.LeftHand)
-        {
-            if (!fingerHapticChanges.SequenceEqual(fingerHapticsLeft))
-            {
-                fingerHapticsLeft = fingerHapticChanges;
-                SetHapticsForFingers(ETrackedControllerRole.LeftHand, fingerHapticChanges);
-            }
-        }
-        else
-        {
-            if (!fingerHapticChanges.SequenceEqual(fingerHapticsRight))
-            {
-                fingerHapticsRight = fingerHapticChanges;
-                SetHapticsForFingers(ETrackedControllerRole.RightHand, fingerHapticChanges);
-            }
-        }
-    }
-
-    private void SetHapticsForFingers(ETrackedControllerRole controllerRole, bool[] fingerHaptics)
-    {
-        if(controllerRole == ETrackedControllerRole.LeftHand)
-        {
-            StopCoroutine(hapticCoroutineLeft);
-            hapticCoroutineLeft = StartCoroutine(hapticThread(controllerRole, fingerHaptics));
-        }
-        else
-        {
-            StopCoroutine(hapticCoroutineRight);
-            hapticCoroutineRight = StartCoroutine(hapticThread(controllerRole, fingerHaptics));
-        }
-    }
-
-    private IEnumerator hapticThread(ETrackedControllerRole controllerRole, bool[] fingerHaptics)
-    {
-        _SetHapticFeedback(controllerRole, new VRHFBInput(fingerHaptics[0], fingerHaptics[1], fingerHaptics[2], fingerHaptics[3], fingerHaptics[4]));
-        yield return new WaitForSeconds(0.5f);
-        _SetHapticFeedback(controllerRole, new VRHFBInput(false, false, false, false, false));
     }
 
     private short mapDistance(float distance, float minDistance, float maxDistance, short minValue, short maxValue)
@@ -442,7 +392,7 @@ public struct VRTFBInput
 public struct VRHFBInput
 {
 
-    public VRHFBInput(bool thumbHaptic, bool indexHaptic, bool middleHaptic, bool ringHaptic, bool pinkyHaptic)
+    public VRHFBInput(short thumbHaptic, short indexHaptic, short middleHaptic, short ringHaptic, short pinkyHaptic)
     {
         this.thumbHaptic = thumbHaptic;
         this.indexHaptic = indexHaptic;
@@ -450,11 +400,11 @@ public struct VRHFBInput
         this.ringHaptic = ringHaptic;
         this.pinkyHaptic = pinkyHaptic;
     }
-    public bool thumbHaptic;
-    public bool indexHaptic;
-    public bool middleHaptic;
-    public bool ringHaptic;
-    public bool pinkyHaptic;
+    public short thumbHaptic;
+    public short indexHaptic;
+    public short middleHaptic;
+    public short ringHaptic;
+    public short pinkyHaptic;
 };
 
 class FFBProvider
@@ -496,8 +446,10 @@ class NamedPipesProvider
     private NamedPipeClientStream forcePipe;
     private NamedPipeClientStream thermoPipe;
     private NamedPipeClientStream hapticPipe;
+    private ETrackedControllerRole pipeControllerRole;
     public NamedPipesProvider(ETrackedControllerRole controllerRole)
     {
+        pipeControllerRole = controllerRole;
         forcePipe = new NamedPipeClientStream("vrapplication/ffb/curl/" + (controllerRole == ETrackedControllerRole.RightHand ? "right" : "left"));
         thermoPipe = new NamedPipeClientStream("vrapplication/ffb/thermo/" + (controllerRole == ETrackedControllerRole.RightHand ? "right" : "left"));
         hapticPipe = new NamedPipeClientStream("vrapplication/ffb/haptic/" + (controllerRole == ETrackedControllerRole.RightHand ? "right" : "left"));
@@ -507,35 +459,32 @@ class NamedPipesProvider
     {
         try
         {
-            Debug.Log("Connecting to pipe: curl");
             forcePipe.Connect();   
-            Debug.Log("Successfully connected to pipe: curl");
+            Debug.Log("Successfully connected to " + (pipeControllerRole == ETrackedControllerRole.RightHand ? "right" : "left") + " pipe: curl");
         }
         catch (Exception e)
         {
-            Debug.Log("Unable to connect to curl pipe. Error: " + e);
+            Debug.Log("Unable to connect to " + (pipeControllerRole == ETrackedControllerRole.RightHand ? "right" : "left") + " curl pipe. Error: " + e);
         }
 
         try
         {
-            Debug.Log("Connecting to pipe: thermo");
             thermoPipe.Connect();
-            Debug.Log("Successfully connected to pipe: thermo");
+            Debug.Log("Successfully connected to " + (pipeControllerRole == ETrackedControllerRole.RightHand ? "right" : "left") + " pipe: thermo");
         }
         catch (Exception e)
         {
-            Debug.Log("Unable to connect to thermo pipe. Error: " + e);
+            Debug.Log("Unable to connect to " + (pipeControllerRole == ETrackedControllerRole.RightHand ? "right" : "left") + " thermo pipe. Error: " + e);
         }
 
         try
         {
-            Debug.Log("Connecting to pipe: haptic");
             hapticPipe.Connect();
-            Debug.Log("Successfully connected to pipe: haptic");
+            Debug.Log("Successfully connected to " + (pipeControllerRole == ETrackedControllerRole.RightHand ? "right" : "left") + " pipe: haptic");
         }
         catch (Exception e)
         {
-            Debug.Log("Unable to connect to haptic pipe. Error: " + e);
+            Debug.Log("Unable to connect to " + (pipeControllerRole == ETrackedControllerRole.RightHand ? "right" : "left") + " haptic pipe. Error: " + e);
         }
 
     }

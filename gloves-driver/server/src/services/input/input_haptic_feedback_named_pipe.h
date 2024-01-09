@@ -12,11 +12,11 @@
 #include "opengloves_interface.h"
 
 struct HapticFeedbackData {
-  bool thumb;
-  bool index;
-  bool middle;
-  bool ring;
-  bool pinky;
+  short thumb;
+  short index;
+  short middle;
+  short ring;
+  short pinky;
 };
 
 class InputHapticFeedbackNamedPipe {

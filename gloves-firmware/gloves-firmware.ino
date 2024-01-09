@@ -133,6 +133,8 @@ int mainloops = 1;
 int target = 0;
 bool latch = false;
 
+unsigned long buzzerTime[5] = {0,0,0,0,0};
+
 void loop() 
 {
     mainloops++;
@@ -196,12 +198,13 @@ void loop()
         {
             int parsedThermo[1];
             int parsedServo[5];
-            bool parsedBuzzer[5];
+            int parsedBuzzer[5];
             decodeData(received, parsedThermo, parsedServo, parsedBuzzer);
             writeThermo(parsedThermo);
             writeServos(parsedServo);
             writeBuzzers(parsedBuzzer);
         }
+        checkBuzzers();
     }
     delay(LOOP_TIME);
 }

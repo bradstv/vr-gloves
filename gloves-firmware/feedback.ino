@@ -70,16 +70,70 @@ void writeThermo(int* parsedThermo)
 
 void writeBuzzers(int* parsedBuzzer)
 {
-    if(parsedBuzzer[0] != -1)
-        digitalWrite(PIN_INDEX_BUZZER, parsedBuzzer[0]);
-    if(parsedBuzzer[1] != -1)
-        digitalWrite(PIN_MIDDLE_BUZZER, parsedBuzzer[1]);
-    if(parsedBuzzer[2] != -1)
-        digitalWrite(PIN_PINKY_BUZZER, parsedBuzzer[2]);
-    if(parsedBuzzer[3] != -1)
-        digitalWrite(PIN_RING_BUZZER, parsedBuzzer[3]);
-    if(parsedBuzzer[4] != -1)
-        digitalWrite(PIN_THUMB_BUZZER, parsedBuzzer[4]);
+    unsigned long currentTime = millis();
+    if(parsedBuzzer[0] > 0)
+    {   
+        buzzerTime[0] = parsedBuzzer[0] + currentTime;
+        digitalWrite(PIN_THUMB_BUZZER, HIGH);
+    }
+
+    if(parsedBuzzer[1] > 0)
+    {   
+        buzzerTime[1] = parsedBuzzer[1] + currentTime;
+        digitalWrite(PIN_INDEX_BUZZER, HIGH);
+    }
+
+    if(parsedBuzzer[2] > 0)
+    {   
+        buzzerTime[2] = parsedBuzzer[2] + currentTime;
+        digitalWrite(PIN_MIDDLE_BUZZER, HIGH);
+    }
+
+    if(parsedBuzzer[3] > 0)
+    {   
+        buzzerTime[3] = parsedBuzzer[3] + currentTime;
+        digitalWrite(PIN_RING_BUZZER, HIGH);
+    }
+
+    if(parsedBuzzer[4] > 0)
+    {   
+        buzzerTime[4] = parsedBuzzer[4] + currentTime;
+        digitalWrite(PIN_PINKY_BUZZER, HIGH);
+    }
+}
+
+void checkBuzzers()
+{
+    unsigned long currentTime = millis();
+    if(buzzerTime[0] > 0 && currentTime > buzzerTime[0])
+    {
+        buzzerTime[0] = 0;
+        digitalWrite(PIN_THUMB_BUZZER, LOW);
+    }
+
+    if(buzzerTime[1] > 0 && currentTime > buzzerTime[1])
+    {
+        buzzerTime[1] = 0;
+        digitalWrite(PIN_INDEX_BUZZER, LOW);
+    }
+
+    if(buzzerTime[2] > 0 && currentTime > buzzerTime[2])
+    {
+        buzzerTime[2] = 0;
+        digitalWrite(PIN_MIDDLE_BUZZER, LOW);
+    }
+
+    if(buzzerTime[3] > 0 && currentTime > buzzerTime[3])
+    {
+        buzzerTime[3] = 0;
+        digitalWrite(PIN_RING_BUZZER, LOW);
+    }
+
+    if(buzzerTime[4] > 0 && currentTime > buzzerTime[4])
+    {
+        buzzerTime[4] = 0;
+        digitalWrite(PIN_PINKY_BUZZER, LOW);
+    }
 }
 
 

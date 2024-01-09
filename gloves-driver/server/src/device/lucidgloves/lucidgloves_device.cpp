@@ -35,13 +35,13 @@ class LucidglovesDevice::Impl {
 
       communication_manager_->WriteOutput(output);
     });
-    
+
     thermo_feedback_ = std::make_unique<InputThermoFeedbackNamedPipe>(hand_, [&](const ThermoFeedbackData &thermo_data) {
       const og::Output output = {
           .type = og::kOutputData_Type_ThermoFeedback,
           .data = {
               .thermo_feedback_data = {
-                   .value = thermo_data.value
+                  .value = thermo_data.value
               }
           },
       };
@@ -53,18 +53,18 @@ class LucidglovesDevice::Impl {
       const og::Output output = {
           .type = og::kOutputData_Type_HapticFeedback,
           .data = {
-            .haptic_feedback_data = {
-                .thumb = haptic_data.thumb,
-                .index = haptic_data.index,
-                .middle = haptic_data.middle,
-                .ring = haptic_data.ring,
-                .pinky = haptic_data.pinky
-            }
+              .haptic_feedback_data = {
+                  .thumb = haptic_data.thumb,
+                  .index = haptic_data.index,
+                  .middle = haptic_data.middle,
+                  .ring = haptic_data.ring,
+                  .pinky = haptic_data.pinky
+              }
           },
       };
 
       communication_manager_->WriteOutput(output);
-    })
+    });
   };
 
   void ListenForInput(std::function<void(const og::InputPeripheralData &)> callback) {

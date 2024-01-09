@@ -83,11 +83,11 @@ static const std::map<AlphaEncodingKey, std::string> alpha_encoding_output_key_s
 
     {kAlphaEncodingKey_ThermoValue, "I"},  // thermo heat/cooling value
 
-    {kAlphaEncodingKey_ThumbBuzzer, "J"},   // thumb haptic feedback
-    {kAlphaEncodingKey_IndexBuzzer, "K"},   // index haptic feedback
-    {kAlphaEncodingKey_MiddleBuzzer, "L"},  // middle haptic feedback
-    {kAlphaEncodingKey_RingBuzzer, "M"},    // ring haptic feedback
-    {kAlphaEncodingKey_PinkyBuzzer, "N"},   // pinky haptic feedback
+    {kAlphaEncodingKey_ThumbHaptic, "J"},  // thumb haptic feedback
+    {kAlphaEncodingKey_IndexHaptic, "K"},  // index haptic feedback
+    {kAlphaEncodingKey_MiddleHaptic, "L"}, // middle haptic feedback
+    {kAlphaEncodingKey_RingHaptic, "M"},   // ring haptic feedback
+    {kAlphaEncodingKey_PinkyHaptic, "N"}   // pinky haptic feedback
 };
 
 static const std::string alpha_encoding_key_characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ()";
@@ -301,24 +301,11 @@ std::string AlphaEncodingService::EncodePacket(const og::Output& output) {
           data.pinky);
     }
 
-    case og::kOutputDataType_Haptic: {
-      const og::OutputHapticData& data = output.data.haptic_data;
-
-      return StringFormat(
-          "%s%.2f%s%.2f%s%.2f\n",
-          alpha_encoding_output_key_strings.at(kAlphaEncodingKey_OutHapticFrequency).c_str(),
-          data.frequency,
-          alpha_encoding_output_key_strings.at(kAlphaEncodingKey_OutHapticDuration).c_str(),
-          data.duration,
-          alpha_encoding_output_key_strings.at(kAlphaEncodingKey_OutHapticAmplitude).c_str(),
-          data.amplitude);
-    }
- 
     case og::kOutputData_Type_ThermoFeedback: {
       const og::OutputThermoFeedbackData& data = output.data.thermo_feedback_data;
 
       return StringFormat(
-          "%s%d%\n", 
+          "%s%d\n",
           alpha_encoding_output_key_strings.at(kAlphaEncodingKey_ThermoValue).c_str(),
           data.value);
     }
@@ -338,6 +325,19 @@ std::string AlphaEncodingService::EncodePacket(const og::Output& output) {
           data.ring,
           alpha_encoding_output_key_strings.at(kAlphaEncodingKey_PinkyHaptic).c_str(),
           data.pinky);
+    }
+
+    case og::kOutputDataType_Haptic: {
+      const og::OutputHapticData& data = output.data.haptic_data;
+
+      return StringFormat(
+          "%s%.2f%s%.2f%s%.2f\n",
+          alpha_encoding_output_key_strings.at(kAlphaEncodingKey_OutHapticFrequency).c_str(),
+          data.frequency,
+          alpha_encoding_output_key_strings.at(kAlphaEncodingKey_OutHapticDuration).c_str(),
+          data.duration,
+          alpha_encoding_output_key_strings.at(kAlphaEncodingKey_OutHapticAmplitude).c_str(),
+          data.amplitude);
     }
 
     default:

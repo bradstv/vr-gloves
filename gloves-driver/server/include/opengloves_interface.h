@@ -146,12 +146,13 @@ namespace og {
   struct OutputThermoFeedbackData {
     int16_t value;
   };
+  // haptic feedback output data from server to device
   struct OutputHapticFeedbackData {
-    bool thumb;
-    bool index;
-    bool middle;
-    bool ring;
-    bool pinky;
+    int16_t thumb;
+    int16_t index;
+    int16_t middle;
+    int16_t ring;
+    int16_t pinky;
   };
   // haptic vibration output from server to device
   struct OutputHapticData {
