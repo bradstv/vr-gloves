@@ -16,29 +16,6 @@
 #define FLIP_FORCE_FEEDBACK true
 #define SERVO_SCALING false //dynamic scaling of servo motors
 
-//(This configuration is for ESP32 DOIT V1 so make sure to change if you're on another board)
-//To use a pin on the multiplexer, use MUX(pin). So for example pin 15 on a mux would be MUX(15).
-#define PIN_PINKY     MUX(12) //These 5 are for flexion
-#define PIN_RING      MUX(9)
-#define PIN_MIDDLE    MUX(6)
-#define PIN_INDEX     MUX(3)
-#define PIN_THUMB     MUX(0)
-#define PIN_CALIB     32 //button for recalibration (You can set this to GPIO0 to use the BOOT button, but only when using Bluetooth.)
-#define DEBUG_LED 2
-#define PIN_PINKY_SERVO     19  //used for force feedback
-#define PIN_RING_SERVO      18 //^
-#define PIN_MIDDLE_SERVO   5 //^
-#define PIN_INDEX_SERVO     17 //^
-#define PIN_THUMB_SERVO    16 //^
-
-//Splay pins. Only used for splay tracking gloves. Use MUX(pin) if you are using a multiplexer for it.
-#define PIN_PINKY_SPLAY  MUX(14)
-#define PIN_RING_SPLAY   MUX(11)
-#define PIN_MIDDLE_SPLAY MUX(8)
-#define PIN_INDEX_SPLAY  MUX(5)
-#define PIN_THUMB_SPLAY  MUX(2)
-
-
 //Select pins for multiplexers, set as needed if using a mux. You can add or remove pins as needed depending on how many select pins your mux needs.
 #define PINS_MUX_SELECT     27,  /*S0 pin*/ \
                             14,  /*S1 pin*/ \
@@ -46,6 +23,15 @@
                             13   /*S3 pin (if your mux is 3-bit like 74HC4051 then you can remove this line and the backslash before it.)*/
 
 #define MUX_INPUT 35  //the input or SIG pin of the multiplexer. This can't be a mux pin.
+
+//(This configuration is for ESP32 DOIT V1 so make sure to change if you're on another board)
+//To use a pin on the multiplexer, use MUX(pin). So for example pin 15 on a mux would be MUX(15).
+/*
+#define PIN_PINKY     MUX(12) //These 5 are for flexion
+#define PIN_RING      MUX(9)
+#define PIN_MIDDLE    MUX(6)
+#define PIN_INDEX     MUX(3)
+#define PIN_THUMB     MUX(0)
 
 //Signal mixing for finger values. Options are: MIXING_NONE, MIXING_SINCOS
 //For double rotary hall effect sensors use MIXING_SINCOS. For potentiometers use MIXING_NONE.
@@ -55,6 +41,34 @@
 #define PIN_MIDDLE_SECOND    MUX(7)
 #define PIN_INDEX_SECOND     MUX(4)
 #define PIN_THUMB_SECOND     MUX(1)
+*/
+
+#define PIN_PINKY     MUX(12) //These 5 are for flexion
+#define PIN_RING      MUX(9)
+#define PIN_MIDDLE    MUX(6)
+#define PIN_INDEX     MUX(3)
+#define PIN_THUMB     27
+
+#define PIN_PINKY_SECOND     MUX(13) 
+#define PIN_RING_SECOND      MUX(10)
+#define PIN_MIDDLE_SECOND    MUX(7)
+#define PIN_INDEX_SECOND     MUX(4)
+#define PIN_THUMB_SECOND     14
+
+//Splay pins. Only used for splay tracking gloves. Use MUX(pin) if you are using a multiplexer for it.
+#define PIN_PINKY_SPLAY  MUX(14)
+#define PIN_RING_SPLAY   MUX(11)
+#define PIN_MIDDLE_SPLAY MUX(8)
+#define PIN_INDEX_SPLAY  MUX(5)
+#define PIN_THUMB_SPLAY  MUX(2)
+
+#define PIN_CALIB     32 //button for recalibration (You can set this to GPIO0 to use the BOOT button, but only when using Bluetooth.)
+#define DEBUG_LED 2
+#define PIN_PINKY_SERVO     19  //used for force feedback
+#define PIN_RING_SERVO      18 //^
+#define PIN_MIDDLE_SERVO   5 //^
+#define PIN_INDEX_SERVO     17 //^
+#define PIN_THUMB_SERVO    16 //^
 
 #define PIN_PINKY_BUZZER     23
 #define PIN_RING_BUZZER      22

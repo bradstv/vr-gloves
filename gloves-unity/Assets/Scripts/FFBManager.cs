@@ -21,9 +21,6 @@ public class FFBManager : MonoBehaviour
     private FFBProvider _ffbProviderLeft;
     private FFBProvider _ffbProviderRight;
 
-    private Coroutine hapticCoroutineLeft;
-    private Coroutine hapticCoroutineRight;
-
     private short thermoValueLeft = 0;
     private short thermoValueRight = 0;
 
@@ -333,15 +330,6 @@ public class FFBManager : MonoBehaviour
         eBone_Aux_RingFinger,
         eBone_Aux_PinkyFinger,
         eBone_Count
-    }
-
-    public enum HandFingers : int
-    {
-        thumb = 0,
-        index, 
-        middle, 
-        ring, 
-        pinky
     }
 
     private void Stop()
