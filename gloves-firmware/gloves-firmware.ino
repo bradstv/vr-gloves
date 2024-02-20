@@ -46,13 +46,13 @@
 #define PIN_PINKY     MUX(12) //These 5 are for flexion
 #define PIN_RING      MUX(9)
 #define PIN_MIDDLE    MUX(6)
-#define PIN_INDEX     MUX(3)
+#define PIN_INDEX     12
 #define PIN_THUMB     27
 
 #define PIN_PINKY_SECOND     MUX(13) 
 #define PIN_RING_SECOND      MUX(10)
 #define PIN_MIDDLE_SECOND    MUX(7)
-#define PIN_INDEX_SECOND     MUX(4)
+#define PIN_INDEX_SECOND     13
 #define PIN_THUMB_SECOND     14
 
 //Splay pins. Only used for splay tracking gloves. Use MUX(pin) if you are using a multiplexer for it.
