@@ -81,7 +81,7 @@ static const std::map<AlphaEncodingKey, std::string> alpha_encoding_output_key_s
     {kAlphaEncodingKey_OutHapticDuration, "G"},   // haptic vibration duration
     {kAlphaEncodingKey_OutHapticAmplitude, "H"},  // haptic vibration amplitude
 
-    {kAlphaEncodingKey_ThermoValue, "I"},  // thermo heat/cooling value
+    {kAlphaEncodingKey_ThermalValue, "I"},  // thermal heat/cooling value
 
     {kAlphaEncodingKey_ThumbHaptic, "J"},  // thumb haptic feedback
     {kAlphaEncodingKey_IndexHaptic, "K"},  // index haptic feedback
@@ -233,6 +233,7 @@ og::Input AlphaEncodingService::DecodePacket(const std::string& buff) {
   og::Input result{};
 
   try {
+    logger.Log(og::kLoggerLevel_Info, "%s", buff.c_str());
     std::map<AlphaEncodingKey, std::string> input_map = ParseToMap(buff);
 
     // info packet
@@ -301,12 +302,12 @@ std::string AlphaEncodingService::EncodePacket(const og::Output& output) {
           data.pinky);
     }
 
-    case og::kOutputData_Type_ThermoFeedback: {
-      const og::OutputThermoFeedbackData& data = output.data.thermo_feedback_data;
+    case og::kOutputData_Type_ThermalFeedback: {
+      const og::OutputThermalFeedbackData& data = output.data.thermal_feedback_data;
 
       return StringFormat(
           "%s%d\n",
-          alpha_encoding_output_key_strings.at(kAlphaEncodingKey_ThermoValue).c_str(),
+          alpha_encoding_output_key_strings.at(kAlphaEncodingKey_ThermalValue).c_str(),
           data.value);
     }
 

@@ -8,7 +8,7 @@
 
 #include "opengloves_interface.h"
 #include "services/input/input_force_feedback_named_pipe.h"
-#include "services/input/input_thermo_feedback_named_pipe.h"
+#include "services/input/input_thermal_feedback_named_pipe.h"
 #include "services/input/input_haptic_feedback_named_pipe.h"
 #include "services/output/output_osc.h"
 
@@ -36,12 +36,12 @@ class LucidglovesDevice::Impl {
       communication_manager_->WriteOutput(output);
     });
 
-    thermo_feedback_ = std::make_unique<InputThermoFeedbackNamedPipe>(hand_, [&](const ThermoFeedbackData &thermo_data) {
+    thermal_feedback_ = std::make_unique<InputThermalFeedbackNamedPipe>(hand_, [&](const ThermalFeedbackData &thermal_data) {
       const og::Output output = {
-          .type = og::kOutputData_Type_ThermoFeedback,
+          .type = og::kOutputData_Type_ThermalFeedback,
           .data = {
-              .thermo_feedback_data = {
-                  .value = thermo_data.value
+              .thermal_feedback_data = {
+                  .value = thermal_data.value
               }
           },
       };
@@ -79,7 +79,7 @@ class LucidglovesDevice::Impl {
     });
 
     force_feedback_->StartListener();
-    thermo_feedback_->StartListener();
+    thermal_feedback_->StartListener();
     haptic_feedback_->StartListener();
   }
 
@@ -89,7 +89,7 @@ class LucidglovesDevice::Impl {
 
   ~Impl() {
     force_feedback_ = nullptr;
-    thermo_feedback_ = nullptr;
+    thermal_feedback_ = nullptr;
     haptic_feedback_ = nullptr;
     communication_manager_ = nullptr;
   }
@@ -100,7 +100,7 @@ class LucidglovesDevice::Impl {
   std::function<void(og::InputPeripheralData)> callback_;
   std::unique_ptr<ICommunicationManager> communication_manager_;
   std::unique_ptr<InputForceFeedbackNamedPipe> force_feedback_;
-  std::unique_ptr<InputThermoFeedbackNamedPipe> thermo_feedback_;
+  std::unique_ptr<InputThermalFeedbackNamedPipe> thermal_feedback_;
   std::unique_ptr<InputHapticFeedbackNamedPipe> haptic_feedback_;
 };
 

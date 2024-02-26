@@ -15,7 +15,7 @@ char* encodeData(int* flexion, bool triggerButton, bool grab, bool pinch)
     return stringToEncode;
 }
 
-void decodeData(char* stringToDecode, int* parsedThermo, int* parsedServo, int* parsedBuzzer)
+void decodeData(char* stringToDecode, int* parsedThermal, int* parsedServo, int* parsedHaptic)
 {
     //Check if a Z command was received
     if (strchr(stringToDecode, 'Z') != NULL) 
@@ -49,13 +49,13 @@ void decodeData(char* stringToDecode, int* parsedThermo, int* parsedServo, int* 
     parsedServo[3] = getArgument(stringToDecode, 'D'); //ring
     parsedServo[4] = getArgument(stringToDecode, 'E'); //pinky
 
-    parsedThermo[0] = getArgument(stringToDecode, 'I');
+    parsedThermal[0] = getArgument(stringToDecode, 'I');
 
-    parsedBuzzer[0] = getArgument(stringToDecode, 'J'); //thumb
-    parsedBuzzer[1] = getArgument(stringToDecode, 'K'); //index
-    parsedBuzzer[2] = getArgument(stringToDecode, 'L'); //middle
-    parsedBuzzer[3] = getArgument(stringToDecode, 'M'); //ring
-    parsedBuzzer[4] = getArgument(stringToDecode, 'N'); //pinky
+    parsedHaptic[0] = getArgument(stringToDecode, 'J'); //thumb
+    parsedHaptic[1] = getArgument(stringToDecode, 'K'); //index
+    parsedHaptic[2] = getArgument(stringToDecode, 'L'); //middle
+    parsedHaptic[3] = getArgument(stringToDecode, 'M'); //ring
+    parsedHaptic[4] = getArgument(stringToDecode, 'N'); //pinky
 }
 
 int getArgument(char* stringToDecode, char command)
@@ -83,13 +83,13 @@ void mapServoLimits(int* parsedServo, float* scaledLimits)
     }
 }
 
-void mapThermoValue(int* parsedThermo, int* thermoValues)
+void mapThermalValue(int* parsedThermal, int* thermalValues)
 {
-    int value = abs(parsedThermo[0]);
-    thermoValues[0] = map(value, 0, 1000, 0, 255);
+    int value = abs(parsedThermal[0]);
+    thermalValues[0] = map(value, 0, 1000, 0, 255);
 
-    if(parsedThermo[0] < 0)
+    if(parsedThermal[0] < 0)
     {
-        thermoValues[0] = thermoValues[0] * -1; //convert back to negative if negative
+        thermalValues[0] = thermalValues[0] * -1; //convert back to negative if negative
     }
 }

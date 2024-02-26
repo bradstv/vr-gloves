@@ -82,7 +82,7 @@ enum AlphaEncodingKey {
 
   kAlphaEncodingKey_Max,
 
-  kAlphaEncodingKey_ThermoValue,
+  kAlphaEncodingKey_ThermalValue,
 
   kAlphaEncodingKey_ThumbHaptic,
   kAlphaEncodingKey_IndexHaptic,

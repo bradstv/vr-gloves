@@ -142,8 +142,8 @@ namespace og {
     int16_t ring;
     int16_t pinky;
   };
-  // thermo feedback output data from server to device
-  struct OutputThermoFeedbackData {
+  // thermal feedback output data from server to device
+  struct OutputThermalFeedbackData {
     int16_t value;
   };
   // haptic feedback output data from server to device
@@ -169,7 +169,7 @@ namespace og {
     OutputFetchInfoData fetch_info;
     OutputHapticData haptic_data;
     OutputForceFeedbackData force_feedback_data;
-    OutputThermoFeedbackData thermo_feedback_data;
+    OutputThermalFeedbackData thermal_feedback_data;
     OutputHapticFeedbackData haptic_feedback_data;
   };
   enum OutputDataType {
@@ -177,7 +177,7 @@ namespace og {
     kOutputDataType_FetchInfo,
     kOutputDataType_Haptic,
     kOutputData_Type_ForceFeedback,
-    kOutputData_Type_ThermoFeedback,
+    kOutputData_Type_ThermalFeedback,
     kOutputData_Type_HapticFeedback
   };
 

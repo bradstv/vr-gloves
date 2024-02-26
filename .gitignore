@@ -7,6 +7,11 @@ gloves-driver/Debug/
 gloves-driver/Release/
 gloves-driver/Build/
 
+gloves-driver-ui/node_modules/
+gloves-driver-ui/.svelte-kit/
+gloves-driver-ui/[Bb]uild/
+gloves-driver-ui/src-tauri/target
+
 *.sln
 *.vcxproj
 *.vcxproj.*

@@ -15,124 +15,124 @@ void setupServos()
     thumbServo.attach(PIN_THUMB_SERVO);
 }
 
-void setupThermo()
+void setupThermal()
 {
-    pinMode(PIN_THERMO_IN1, OUTPUT);
-    pinMode(PIN_THERMO_IN2, OUTPUT);
+    pinMode(PIN_THERMAL_IN1, OUTPUT);
+    pinMode(PIN_THERMAL_IN2, OUTPUT);
     
-    ledcSetup(THERMO_PWM_CHANNEL, 1000, 8);
-    ledcAttachPin(PIN_THERMO_ENA, THERMO_PWM_CHANNEL);
+    ledcSetup(THERMAL_PWM_CHANNEL, 1000, 8);
+    ledcAttachPin(PIN_THERMAL_ENA, THERMAL_PWM_CHANNEL);
 }
 
-void setupBuzzers()
+void setupHaptics()
 {
-    pinMode(PIN_PINKY_BUZZER, OUTPUT);
-    pinMode(PIN_RING_BUZZER, OUTPUT);
-    pinMode(PIN_MIDDLE_BUZZER, OUTPUT);
-    pinMode(PIN_INDEX_BUZZER, OUTPUT);
-    pinMode(PIN_THUMB_BUZZER, OUTPUT);
+    pinMode(PIN_PINKY_HAPTIC, OUTPUT);
+    pinMode(PIN_RING_HAPTIC, OUTPUT);
+    pinMode(PIN_MIDDLE_HAPTIC, OUTPUT);
+    pinMode(PIN_INDEX_HAPTIC, OUTPUT);
+    pinMode(PIN_THUMB_HAPTIC, OUTPUT);
 }
 
 void writeServos(int* parsedServo)
 {
     float scaledLimits[5];
     mapServoLimits(parsedServo, scaledLimits);
-    indexServo.write(scaledLimits[0]);
-    middleServo.write(scaledLimits[1]);
-    pinkyServo.write(scaledLimits[2]);
-    ringServo.write(scaledLimits[3]);
-    thumbServo.write(scaledLimits[4]);
+    if(parsedServo[THUMB_IND] >= 0) thumbServo.write(scaledLimits[0]);
+    if(parsedServo[INDEX_IND] >= 0) indexServo.write(scaledLimits[1]);
+    if(parsedServo[MIDDLE_IND] >= 0) middleServo.write(scaledLimits[2]);
+    if(parsedServo[RING_IND] >= 0) ringServo.write(scaledLimits[3]);
+    if(parsedServo[PINKY_IND] >= 0) pinkyServo.write(scaledLimits[4]);
 }
 
-void writeThermo(int* parsedThermo)
+void writeThermal(int* parsedThermal)
 {
-    int thermoValues[1];
-    mapThermoValue(parsedThermo, thermoValues);
+    int thermalValues[1];
+    mapThermalValue(parsedThermal, thermalValues);
 
-    if(thermoValues[0] == 0) //turn off
+    if(thermalValues[0] == 0) //turn off
     {
-        digitalWrite(PIN_THERMO_IN1, LOW);
-        digitalWrite(PIN_THERMO_IN2, LOW); 
+        digitalWrite(PIN_THERMAL_IN1, LOW);
+        digitalWrite(PIN_THERMAL_IN2, LOW); 
     }
-    else if(thermoValues[0] < 0) //start cooling
+    else if(thermalValues[0] < 0) //start cooling
     {
-        digitalWrite(PIN_THERMO_IN1, HIGH);
-        digitalWrite(PIN_THERMO_IN2, LOW);
-        ledcWrite(THERMO_PWM_CHANNEL, abs(thermoValues[0])); 
+        digitalWrite(PIN_THERMAL_IN1, HIGH);
+        digitalWrite(PIN_THERMAL_IN2, LOW);
+        ledcWrite(THERMAL_PWM_CHANNEL, abs(thermalValues[0])); 
     }
-    else if(thermoValues[0] > 0) //start heating
+    else if(thermalValues[0] > 0) //start heating
     {
-        digitalWrite(PIN_THERMO_IN1, LOW);
-        digitalWrite(PIN_THERMO_IN2, HIGH);
-        ledcWrite(THERMO_PWM_CHANNEL, thermoValues[0]);
+        digitalWrite(PIN_THERMAL_IN1, LOW);
+        digitalWrite(PIN_THERMAL_IN2, HIGH);
+        ledcWrite(THERMAL_PWM_CHANNEL, thermalValues[0]);
     }
 }
 
-void writeBuzzers(int* parsedBuzzer)
-{
-    unsigned long currentTime = millis();
-    if(parsedBuzzer[0] > 0)
-    {   
-        buzzerTime[0] = parsedBuzzer[0] + currentTime;
-        digitalWrite(PIN_THUMB_BUZZER, HIGH);
-    }
-
-    if(parsedBuzzer[1] > 0)
-    {   
-        buzzerTime[1] = parsedBuzzer[1] + currentTime;
-        digitalWrite(PIN_INDEX_BUZZER, HIGH);
-    }
-
-    if(parsedBuzzer[2] > 0)
-    {   
-        buzzerTime[2] = parsedBuzzer[2] + currentTime;
-        digitalWrite(PIN_MIDDLE_BUZZER, HIGH);
-    }
-
-    if(parsedBuzzer[3] > 0)
-    {   
-        buzzerTime[3] = parsedBuzzer[3] + currentTime;
-        digitalWrite(PIN_RING_BUZZER, HIGH);
-    }
-
-    if(parsedBuzzer[4] > 0)
-    {   
-        buzzerTime[4] = parsedBuzzer[4] + currentTime;
-        digitalWrite(PIN_PINKY_BUZZER, HIGH);
-    }
-}
-
-void checkBuzzers()
+void writeHaptics(int* parsedHaptic)
 {
     unsigned long currentTime = millis();
-    if(buzzerTime[0] > 0 && currentTime > buzzerTime[0])
-    {
-        buzzerTime[0] = 0;
-        digitalWrite(PIN_THUMB_BUZZER, LOW);
+    if(parsedHaptic[THUMB_IND] >= 0)
+    {   
+        hapticTime[THUMB_IND] = parsedHaptic[THUMB_IND] + currentTime;
+        digitalWrite(PIN_THUMB_HAPTIC, HIGH);
     }
 
-    if(buzzerTime[1] > 0 && currentTime > buzzerTime[1])
-    {
-        buzzerTime[1] = 0;
-        digitalWrite(PIN_INDEX_BUZZER, LOW);
+    if(parsedHaptic[INDEX_IND] >= 0)
+    {   
+        hapticTime[INDEX_IND] = parsedHaptic[INDEX_IND] + currentTime;
+        digitalWrite(PIN_INDEX_HAPTIC, HIGH);
     }
 
-    if(buzzerTime[2] > 0 && currentTime > buzzerTime[2])
-    {
-        buzzerTime[2] = 0;
-        digitalWrite(PIN_MIDDLE_BUZZER, LOW);
+    if(parsedHaptic[MIDDLE_IND] >= 0)
+    {   
+        hapticTime[MIDDLE_IND] = parsedHaptic[MIDDLE_IND] + currentTime;
+        digitalWrite(PIN_MIDDLE_HAPTIC, HIGH);
     }
 
-    if(buzzerTime[3] > 0 && currentTime > buzzerTime[3])
-    {
-        buzzerTime[3] = 0;
-        digitalWrite(PIN_RING_BUZZER, LOW);
+    if(parsedHaptic[RING_IND] >= 0)
+    {   
+        hapticTime[RING_IND] = parsedHaptic[RING_IND] + currentTime;
+        digitalWrite(PIN_RING_HAPTIC, HIGH);
     }
 
-    if(buzzerTime[4] > 0 && currentTime > buzzerTime[4])
+    if(parsedHaptic[PINKY_IND] >= 0)
+    {   
+        hapticTime[PINKY_IND] = parsedHaptic[PINKY_IND] + currentTime;
+        digitalWrite(PIN_PINKY_HAPTIC, HIGH);
+    }
+}
+
+void checkHaptics()
+{
+    unsigned long currentTime = millis();
+    if(hapticTime[THUMB_IND] > 0 && currentTime > hapticTime[THUMB_IND])
     {
-        buzzerTime[4] = 0;
-        digitalWrite(PIN_PINKY_BUZZER, LOW);
+        hapticTime[THUMB_IND] = 0;
+        digitalWrite(PIN_THUMB_HAPTIC, LOW);
+    }
+
+    if(hapticTime[INDEX_IND] > 0 && currentTime > hapticTime[INDEX_IND])
+    {
+        hapticTime[INDEX_IND] = 0;
+        digitalWrite(PIN_INDEX_HAPTIC, LOW);
+    }
+
+    if(hapticTime[MIDDLE_IND] > 0 && currentTime > hapticTime[MIDDLE_IND])
+    {
+        hapticTime[MIDDLE_IND] = 0;
+        digitalWrite(PIN_MIDDLE_HAPTIC, LOW);
+    }
+
+    if(hapticTime[RING_IND] > 0 && currentTime > hapticTime[RING_IND])
+    {
+        hapticTime[RING_IND] = 0;
+        digitalWrite(PIN_RING_HAPTIC, LOW);
+    }
+
+    if(hapticTime[PINKY_IND] > 0 && currentTime > hapticTime[PINKY_IND])
+    {
+        hapticTime[PINKY_IND] = 0;
+        digitalWrite(PIN_PINKY_HAPTIC, LOW);
     }
 }
 

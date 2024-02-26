@@ -11,17 +11,17 @@
 
 #include "opengloves_interface.h"
 
-struct ThermoFeedbackData {
+struct ThermalFeedbackData {
   short value;
 };
 
-class InputThermoFeedbackNamedPipe {
+class InputThermalFeedbackNamedPipe {
  public:
-  InputThermoFeedbackNamedPipe(og::Hand hand, std::function<void(const ThermoFeedbackData&)> on_data_callback);
+  InputThermalFeedbackNamedPipe(og::Hand hand, std::function<void(const ThermalFeedbackData&)> on_data_callback);
 
   void StartListener();
 
-  ~InputThermoFeedbackNamedPipe();
+  ~InputThermalFeedbackNamedPipe();
  private:
   class Impl;
   std::unique_ptr<Impl> pImpl_;

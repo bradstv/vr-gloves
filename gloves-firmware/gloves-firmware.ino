@@ -46,14 +46,14 @@
 #define PIN_PINKY     MUX(12) //These 5 are for flexion
 #define PIN_RING      MUX(9)
 #define PIN_MIDDLE    MUX(6)
-#define PIN_INDEX     12
+#define PIN_INDEX     14
 #define PIN_THUMB     27
 
 #define PIN_PINKY_SECOND     MUX(13) 
 #define PIN_RING_SECOND      MUX(10)
 #define PIN_MIDDLE_SECOND    MUX(7)
 #define PIN_INDEX_SECOND     13
-#define PIN_THUMB_SECOND     14
+#define PIN_THUMB_SECOND     35
 
 //Splay pins. Only used for splay tracking gloves. Use MUX(pin) if you are using a multiplexer for it.
 #define PIN_PINKY_SPLAY  MUX(14)
@@ -70,16 +70,16 @@
 #define PIN_INDEX_SERVO     17 //^
 #define PIN_THUMB_SERVO    16 //^
 
-#define PIN_PINKY_BUZZER     23
-#define PIN_RING_BUZZER      22
-#define PIN_MIDDLE_BUZZER    15
-#define PIN_INDEX_BUZZER     4
-#define PIN_THUMB_BUZZER     21
-#define PIN_THERMO_IN1       33
-#define PIN_THERMO_IN2       25
-#define PIN_THERMO_ENA       26
+#define PIN_PINKY_HAPTIC     23
+#define PIN_RING_HAPTIC      22
+#define PIN_MIDDLE_HAPTIC    15
+#define PIN_INDEX_HAPTIC     4
+#define PIN_THUMB_HAPTIC     21
+#define PIN_THERMAL_IN1       33
+#define PIN_THERMAL_IN2       25
+#define PIN_THERMAL_ENA       26
 
-#define THERMO_PWM_CHANNEL   15
+#define THERMAL_PWM_CHANNEL   15
 
 #define ALWAYS_CALIBRATING CALIBRATION_LOOPS == 0
 
@@ -125,8 +125,8 @@ void setup()
     serialStart();
     setupInputs();
     setupServos();
-    setupThermo();
-    setupBuzzers();
+    setupThermal();
+    setupHaptics();
 
     xTaskCreatePinnedToCore(
       getInputs, /* Function to implement the task */
@@ -147,7 +147,7 @@ int mainloops = 1;
 int target = 0;
 bool latch = false;
 
-unsigned long buzzerTime[5] = {0,0,0,0,0};
+unsigned long hapticTime[5] = {0,0,0,0,0};
 
 void loop() 
 {
@@ -210,15 +210,15 @@ void loop()
         char received[100];
         if(serialRead(received))
         {
-            int parsedThermo[1];
+            int parsedThermal[1];
             int parsedServo[5];
-            int parsedBuzzer[5];
-            decodeData(received, parsedThermo, parsedServo, parsedBuzzer);
-            writeThermo(parsedThermo);
+            int parsedHaptic[5];
+            decodeData(received, parsedThermal, parsedServo, parsedHaptic);
+            writeThermal(parsedThermal);
             writeServos(parsedServo);
-            writeBuzzers(parsedBuzzer);
+            writeHaptics(parsedHaptic);
         }
-        checkBuzzers();
+        checkHaptics();
     }
     delay(LOOP_TIME);
 }

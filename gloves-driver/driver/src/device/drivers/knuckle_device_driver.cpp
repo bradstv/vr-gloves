@@ -86,6 +86,42 @@ class KnuckleDeviceDriver::Impl {
 
       return true;
     });
+
+    external_server.RegisterFunctionCallback("thermal_feedback/" + std::string(IsRightHand() ? "right" : "left"), [&](const std::string &data) {
+      const nlohmann::json json = nlohmann::json::parse(data);
+
+      int16_t value = json["value"];
+
+      og::Output output{};
+      output.type = og::kOutputData_Type_ThermalFeedback;
+
+      og::OutputThermalFeedbackData thermal_feedback_data = {value};
+      output.data.thermal_feedback_data = thermal_feedback_data;
+
+      device_->Output(output);
+
+      return true;
+    });
+
+    external_server.RegisterFunctionCallback("haptic_feedback/" + std::string(IsRightHand() ? "right" : "left"), [&](const std::string &data) {
+      const nlohmann::json json = nlohmann::json::parse(data);
+
+      int16_t thumb = json["thumb"];
+      int16_t index = json["index"];
+      int16_t middle = json["middle"];
+      int16_t ring = json["ring"];
+      int16_t pinky = json["pinky"];
+
+      og::Output output{};
+      output.type = og::kOutputData_Type_HapticFeedback;
+
+      og::OutputHapticFeedbackData haptic_feedback_data = {thumb, index, middle, ring, pinky};
+      output.data.haptic_feedback_data = haptic_feedback_data;
+
+      device_->Output(output);
+
+      return true;
+    });
   }
 
   vr::EVRInitError Activate(uint32_t device_id) {
