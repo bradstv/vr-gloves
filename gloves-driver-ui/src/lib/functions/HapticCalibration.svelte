@@ -73,7 +73,7 @@
 	<button
 		class="btn btn-sm btn-success"
 		on:click={() => {
-			$state.form.amount = 1;
+			$state.form.amount = 0;
 			enable_haptics();
 		}}
 		>Turn Off Haptics

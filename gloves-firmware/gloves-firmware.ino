@@ -17,10 +17,10 @@
 #define SERVO_SCALING false //dynamic scaling of servo motors
 
 //Select pins for multiplexers, set as needed if using a mux. You can add or remove pins as needed depending on how many select pins your mux needs.
-#define PINS_MUX_SELECT     27,  /*S0 pin*/ \
-                            14,  /*S1 pin*/ \
-                            12,  /*S2 pin*/ \
-                            13   /*S3 pin (if your mux is 3-bit like 74HC4051 then you can remove this line and the backslash before it.)*/
+#define PINS_MUX_SELECT     13,  /*S0 pin*/ \
+                            12,  /*S1 pin*/ \
+                            14,  /*S2 pin*/ \
+                            27   /*S3 pin (if your mux is 3-bit like 74HC4051 then you can remove this line and the backslash before it.)*/
 
 #define MUX_INPUT 35  //the input or SIG pin of the multiplexer. This can't be a mux pin.
 
