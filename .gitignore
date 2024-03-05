@@ -63,3 +63,4 @@ sysinfo.txt
 *.code-workspace
 
 gloves-unity/.idea/
+*.bat

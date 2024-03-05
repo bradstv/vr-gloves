@@ -9,4 +9,15 @@ public class ObjectToggles : MonoBehaviour
     public bool triggerHaptics = false;
     public short hapticTime = 1000;
     public float heatRadius = 0.25f;
+    public Vector3 radiusOffset = Vector3.zero;
+
+    void OnDrawGizmosSelected()
+    {
+        if(isHot || isCold)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position + radiusOffset, heatRadius);
+        }
+    }
 }
+

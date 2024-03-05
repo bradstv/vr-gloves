@@ -120,16 +120,8 @@ void getFingerPositions(bool calibrating, bool reset)
 
     int rawFingers[2 * NUM_FINGERS];
 
-    #if USING_SPLAY
-    int rawFingersSplay[NUM_FINGERS] = {analogPinRead(PIN_THUMB_SPLAY), 
-                                analogPinRead(PIN_INDEX_SPLAY), 
-                                analogPinRead(PIN_MIDDLE_SPLAY), 
-                                analogPinRead(PIN_RING_SPLAY), 
-                                analogPinRead(PIN_PINKY_SPLAY)};
-    #else
     int rawFingersSplay[NUM_FINGERS] = {0,0,0,0,0};
-    #endif
-
+    
     for (int i = 0; i < NUM_FINGERS; i++)
     {
         rawFingers[i] = rawFingersFlexion[i];

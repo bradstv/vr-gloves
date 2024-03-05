@@ -233,7 +233,7 @@ og::Input AlphaEncodingService::DecodePacket(const std::string& buff) {
   og::Input result{};
 
   try {
-    logger.Log(og::kLoggerLevel_Info, "%s", buff.c_str());
+    //logger.Log(og::kLoggerLevel_Info, "%s", buff.c_str());
     std::map<AlphaEncodingKey, std::string> input_map = ParseToMap(buff);
 
     // info packet

@@ -139,6 +139,17 @@ public class FFBManager : MonoBehaviour
 
         for (int boneIndex = 0; boneIndex < skeleton.bonePositions.Length; boneIndex++)
         {
+            //get the finger for the current bone
+            int finger = SteamVR_Skeleton_JointIndexes.GetFingerForBone(boneIndex);
+
+            //no curl values for free fingers
+            SteamVR_Skeleton_FingerExtensionTypes extensionType = skeleton.GetMovementTypeForBone(boneIndex);
+            if (extensionType == SteamVR_Skeleton_FingerExtensionTypes.Free)
+            {
+                fingerCurlValues[finger].Add(0.0f);
+                continue;
+            }
+
             //calculate open hand angle to poser animation
             float openToPoser = Quaternion.Angle(openHand.boneRotations[boneIndex], skeleton.boneRotations[boneIndex]);
 
@@ -148,9 +159,6 @@ public class FFBManager : MonoBehaviour
 
             //get the ratio between open to poser and open to closed
             float curl = openToPoser / openToClosed;
-
-            //get the finger for the current bone
-            int finger = SteamVR_Skeleton_JointIndexes.GetFingerForBone(boneIndex);
 
             if (!float.IsNaN(curl) && curl != 0 && finger >= 0)
             {
@@ -200,9 +208,13 @@ public class FFBManager : MonoBehaviour
             var objectToggle = touchedObject.GetComponent<ObjectToggles>();
 
             if (objectToggle == null)
-                continue;
+            {
+                objectToggle = touchedObject.GetComponentInParent<ObjectToggles>();
+                if (objectToggle == null)
+                    continue;
+            }
 
-            float distance = Vector3.Distance(position, collider.transform.position);
+            float distance = Vector3.Distance(position, collider.transform.position + objectToggle.radiusOffset);
 
             if(distance > objectToggle.heatRadius)
                 continue;
@@ -211,13 +223,13 @@ public class FFBManager : MonoBehaviour
             {
                 tempThermoValue += mapDistance(distance, 0, objectToggle.heatRadius, 1000, 0);
                 Debug.Log("Close to a Hot Object!");
-                Debug.Log(tempThermoValue);
+                //Debug.Log(tempThermoValue);
             }
             else if (objectToggle.isCold)
             {
                 tempThermoValue += mapDistance(distance, 0, objectToggle.heatRadius, -1000, 0);
                 Debug.Log("Close to a Cold Object!");
-                Debug.Log(tempThermoValue);
+                //Debug.Log(tempThermoValue);
             }
         }
 
@@ -247,7 +259,11 @@ public class FFBManager : MonoBehaviour
                 var objectToggle = touchedObject.GetComponent<ObjectToggles>();
 
                 if (objectToggle == null)
-                    continue;
+                {
+                    objectToggle = touchedObject.GetComponentInParent<ObjectToggles>();
+                    if (objectToggle == null)
+                        continue;
+                }
 
                 if (!objectToggle.triggerHaptics)
                     continue;
