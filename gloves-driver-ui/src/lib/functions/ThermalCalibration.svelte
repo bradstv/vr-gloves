@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
 	export let title = 'Thermal Calibration';
 	export let description =
-		'Change thermal pad temperature to test functionality. Value from -500 to 500. Negative amount = cold, positive amount = hot.';
+		'Change thermal pad temperature to test functionality. Value from -1000 to 1000. Negative amount = cold, positive amount = hot.';
 </script>
 
 <script lang="ts">
@@ -54,8 +54,8 @@
 	<label for="thermal-temp">Value: {$state.form.amount}</label>
 	<input
 		type="range"
-		min="-500"
-		max="500"
+		min="-1000"
+		max="1000"
 		bind:value={$state.form.amount}
 		class="range range-xs"
 		id="thermal-temp"

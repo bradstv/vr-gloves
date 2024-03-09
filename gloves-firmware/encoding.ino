@@ -36,6 +36,11 @@ void decodeData(char* stringToDecode, int* parsedThermal, int* parsedServo, int*
             saveTravel();
             toReturn = true;
         }
+        if (strstr(stringToDecode, "Feedback") != NULL) 
+        {
+            isUsingFeedback = !isUsingFeedback;
+            toReturn = true;
+        }
 
         if (toReturn)
         {
@@ -76,10 +81,15 @@ void mapServoLimits(int* parsedServo, float* scaledLimits)
     for(int i = 0; i < 5; i++)
     {
         #if FLIP_FORCE_FEEDBACK
-        scaledLimits[i] = parsedServo[i] / 1000.0f * 180.0f;
+        scaledLimits[i] = parsedServo[i] / 1000.0f * SERVO_MAX;
         #else
-        scaledLimits[i] = 180.0f - parsedServo[i] / 1000.0f * 180.0f;
+        scaledLimits[i] = SERVO_MAX - parsedServo[i] / 1000.0f * SERVO_MAX;
         #endif
+
+        if(scaledLimits[i] > SERVO_MAX)
+        {
+            scaledLimits[i] = SERVO_MAX; //clamp max servo value
+        }    
     }
 }
 

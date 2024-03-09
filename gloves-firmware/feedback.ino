@@ -37,11 +37,12 @@ void writeServos(int* parsedServo)
 {
     float scaledLimits[5];
     mapServoLimits(parsedServo, scaledLimits);
-    if(parsedServo[THUMB_IND] >= 0) thumbServo.write(scaledLimits[0]);
-    if(parsedServo[INDEX_IND] >= 0) indexServo.write(scaledLimits[1]);
-    if(parsedServo[MIDDLE_IND] >= 0) middleServo.write(scaledLimits[2]);
-    if(parsedServo[RING_IND] >= 0) ringServo.write(scaledLimits[3]);
-    if(parsedServo[PINKY_IND] >= 0) pinkyServo.write(scaledLimits[4]);
+    
+    if(parsedServo[THUMB_IND] >= 0) thumbServo.write(scaledLimits[THUMB_IND]);
+    if(parsedServo[INDEX_IND] >= 0) indexServo.write(scaledLimits[INDEX_IND]);
+    if(parsedServo[MIDDLE_IND] >= 0) middleServo.write(scaledLimits[MIDDLE_IND]);
+    if(parsedServo[RING_IND] >= 0) ringServo.write(scaledLimits[RING_IND]);
+    if(parsedServo[PINKY_IND] >= 0) pinkyServo.write(scaledLimits[PINKY_IND]);
 }
 
 void writeThermal(int* parsedThermal)

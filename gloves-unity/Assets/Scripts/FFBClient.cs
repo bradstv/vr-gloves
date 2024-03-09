@@ -33,4 +33,49 @@ public class FFBClient : MonoBehaviour
             _ffbManager.RelaxForceFeedback(hand);
         }
     }
+
+    private void OnAttachedToHand(Hand hand)
+    {
+        Debug.Log("Received Hand attached event");
+
+        var objectToggle = GetComponent<ObjectToggles>();
+        if (objectToggle == null)
+            return;
+
+        if(objectToggle.grabbedTemp > 0)
+        {
+            if (objectToggle.isHot)
+            {
+                _ffbManager.SetThermoFeedbackFromObject(hand, objectToggle.grabbedTemp);
+            }
+            else if (objectToggle.isCold)
+            {
+                _ffbManager.SetThermoFeedbackFromObject(hand, (short)-objectToggle.grabbedTemp);
+            }
+        }
+
+        if(objectToggle.grabbedHaptics)
+        {
+            _ffbManager.SetHapticFeedbackFromObject(hand, objectToggle.hapticTime);
+        }
+    }
+
+    private void OnDetachedFromHand(Hand hand)
+    {
+        Debug.Log("Received Hand detach event");
+
+        var objectToggle = GetComponent<ObjectToggles>();
+        if (objectToggle == null)
+            return;
+
+        if (objectToggle.grabbedTemp > 0)
+        {
+            _ffbManager.SetThermoFeedbackFromObject(hand, 0);
+        }
+
+        if (objectToggle.grabbedHaptics)
+        {
+            _ffbManager.SetHapticFeedbackFromObject(hand, 0);
+        }
+    }
 }

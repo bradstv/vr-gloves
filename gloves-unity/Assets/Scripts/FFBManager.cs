@@ -24,8 +24,8 @@ public class FFBManager : MonoBehaviour
     private short thermoValueLeft = 0;
     private short thermoValueRight = 0;
 
-    private short[] fingerHapticsLeft = new short[] { 0, 0, 0, 0, 0 };
-    private short[] fingerHapticsRight = new short[] { 0, 0, 0, 0, 0 };
+    private short[] fingerHapticsLeft = new short[] { -1, -1, -1, -1, -1 };
+    private short[] fingerHapticsRight = new short[] { -1, -1, -1, -1, -1 };
 
     public float thermoLoopTime = 1.0f;
 
@@ -197,11 +197,35 @@ public class FFBManager : MonoBehaviour
         _SetForceFeedback(hand, input);
     }
 
+    public void SetThermoFeedbackFromObject(Hand hand, short thermoValue)
+    {
+        if (hand.handType == SteamVR_Input_Sources.LeftHand)
+        {
+            _SetThermoFeedback(ETrackedControllerRole.LeftHand, new VRTFBInput(thermoValue));
+        }
+        else
+        {
+            _SetThermoFeedback(ETrackedControllerRole.RightHand, new VRTFBInput(thermoValue));
+        }
+    }
+
+    public void SetHapticFeedbackFromObject(Hand hand, short hapticTime)
+    {
+        if (hand.handType == SteamVR_Input_Sources.LeftHand)
+        {
+            _SetHapticFeedback(ETrackedControllerRole.LeftHand, new VRHFBInput(hapticTime, hapticTime, hapticTime, hapticTime, hapticTime));
+        }
+        else
+        {
+            _SetHapticFeedback(ETrackedControllerRole.RightHand, new VRHFBInput(hapticTime, hapticTime, hapticTime, hapticTime, hapticTime));
+        }
+    }
+
     public void SetThermoFeedbackFromSkeleton(Hand hand, SteamVR_Behaviour_Skeleton skeleton) 
     {
         short tempThermoValue = 0;
         Vector3 position = skeleton.GetBonePosition(0);
-        Collider[] colliders = Physics.OverlapSphere(position, 0.5f);
+        Collider[] colliders = Physics.OverlapSphere(position, 2.0f);
         foreach (Collider collider in colliders)
         {
             var touchedObject = collider.gameObject;
@@ -216,20 +240,18 @@ public class FFBManager : MonoBehaviour
 
             float distance = Vector3.Distance(position, collider.transform.position + objectToggle.radiusOffset);
 
-            if(distance > objectToggle.heatRadius)
+            if(objectToggle.grabbedTemp > 0 || distance > objectToggle.radiusTemp)
                 continue;
 
             if (objectToggle.isHot)
             {
-                tempThermoValue += mapDistance(distance, 0, objectToggle.heatRadius, 1000, 0);
+                tempThermoValue += mapDistance(distance, 0, objectToggle.radiusTemp, 1000, 0);
                 Debug.Log("Close to a Hot Object!");
-                //Debug.Log(tempThermoValue);
             }
             else if (objectToggle.isCold)
             {
-                tempThermoValue += mapDistance(distance, 0, objectToggle.heatRadius, -1000, 0);
+                tempThermoValue += mapDistance(distance, 0, objectToggle.radiusTemp, -1000, 0);
                 Debug.Log("Close to a Cold Object!");
-                //Debug.Log(tempThermoValue);
             }
         }
 
@@ -252,7 +274,7 @@ public class FFBManager : MonoBehaviour
         {
             Vector3 position = skeleton.GetBonePosition((int)fingerTips[i]);
             Collider[] colliders = Physics.OverlapSphere(position, 0.05f);
-            short hapticTime = 0;
+            short hapticTime = -1;
             foreach (Collider collider in colliders)
             {
                 var touchedObject = collider.gameObject;
@@ -265,7 +287,7 @@ public class FFBManager : MonoBehaviour
                         continue;
                 }
 
-                if (!objectToggle.triggerHaptics)
+                if (!objectToggle.radiusHaptics)
                     continue;
 
                 hapticTime = objectToggle.hapticTime;

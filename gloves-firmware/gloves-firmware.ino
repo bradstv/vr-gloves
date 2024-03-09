@@ -35,7 +35,7 @@
 #define PIN_INDEX_SECOND     MUX(4)
 #define PIN_THUMB_SECOND     MUX(1)
 
-#define PIN_CALIB     32 //button for recalibration (You can set this to GPIO0 to use the BOOT button, but only when using Bluetooth.)
+#define PIN_CALIB     32 //button for recalibration
 #define DEBUG_LED      2
 
 #define PIN_PINKY_SERVO     19  //used for force feedback
@@ -59,6 +59,7 @@
 
 bool calibrate = false;
 bool calibButton = false;
+bool isUsingFeedback = true;
 int* fingerPos = (int[]){0,0,0,0,0,0,0,0,0,0};
 
 ordered_lock* fingerPosLock = new ordered_lock();
@@ -181,18 +182,21 @@ void loop()
 
         serialOutput(encodeData(fingerPosCopy, triggerButton, grabButton, pinchButton));
 
-        char received[100];
-        if(serialRead(received))
+        if(isUsingFeedback)
         {
-            int parsedThermal[1];
-            int parsedServo[5];
-            int parsedHaptic[5];
-            decodeData(received, parsedThermal, parsedServo, parsedHaptic);
-            writeThermal(parsedThermal);
-            writeServos(parsedServo);
-            writeHaptics(parsedHaptic);
+            char received[100];
+            if(serialRead(received))
+            {
+                int parsedThermal[1];
+                int parsedServo[5];
+                int parsedHaptic[5];
+                decodeData(received, parsedThermal, parsedServo, parsedHaptic);
+                writeThermal(parsedThermal);
+                writeServos(parsedServo);
+                writeHaptics(parsedHaptic);
+            }
+            checkHaptics();
         }
-        checkHaptics();
     }
     delay(LOOP_TIME);
 }

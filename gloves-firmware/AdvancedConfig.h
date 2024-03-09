@@ -5,7 +5,7 @@
 
 #define NUM_FINGERS 5
 
-//Finger indeces (not used for legacy)
+//Finger indeces
 #define PINKY_IND 4
 #define RING_IND 3
 #define MIDDLE_IND 2
@@ -13,6 +13,7 @@
 #define THUMB_IND 0
 
 #define ANALOG_MAX 4095
+#define SERVO_MAX 144.0f
 
 #define MULTIPLEXER_DELAY   5 //How many microseconds should be delayed between multiplexer reads
 

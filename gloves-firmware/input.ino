@@ -80,7 +80,7 @@ void setupInputs()
     pinMode(MUX_INPUT, INPUT);
     for (int i = 0; i < sizeof(selectPins); i++)
     {
-        pinMode(selectPins[i], INPUT); //for testing, revert to OUTPUT
+        pinMode(selectPins[i], OUTPUT);
     }
 }
 
