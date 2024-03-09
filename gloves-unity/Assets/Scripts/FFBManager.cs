@@ -186,41 +186,6 @@ public class FFBManager : MonoBehaviour
         _SetForceFeedback(hand, new VRFFBInput(fingerCurlAverages[0], fingerCurlAverages[1], fingerCurlAverages[2], fingerCurlAverages[3], fingerCurlAverages[4]));
     }
 
-    public void RelaxForceFeedback(Hand hand)
-    {
-        VRFFBInput input = new VRFFBInput(0, 0, 0, 0, 0);
-        _SetForceFeedback(hand, input);
-    }
-
-    public void SetForceFeedbackByCurl(Hand hand, VRFFBInput input)
-    {
-        _SetForceFeedback(hand, input);
-    }
-
-    public void SetThermoFeedbackFromObject(Hand hand, short thermoValue)
-    {
-        if (hand.handType == SteamVR_Input_Sources.LeftHand)
-        {
-            _SetThermoFeedback(ETrackedControllerRole.LeftHand, new VRTFBInput(thermoValue));
-        }
-        else
-        {
-            _SetThermoFeedback(ETrackedControllerRole.RightHand, new VRTFBInput(thermoValue));
-        }
-    }
-
-    public void SetHapticFeedbackFromObject(Hand hand, short hapticTime)
-    {
-        if (hand.handType == SteamVR_Input_Sources.LeftHand)
-        {
-            _SetHapticFeedback(ETrackedControllerRole.LeftHand, new VRHFBInput(hapticTime, hapticTime, hapticTime, hapticTime, hapticTime));
-        }
-        else
-        {
-            _SetHapticFeedback(ETrackedControllerRole.RightHand, new VRHFBInput(hapticTime, hapticTime, hapticTime, hapticTime, hapticTime));
-        }
-    }
-
     public void SetThermoFeedbackFromSkeleton(Hand hand, SteamVR_Behaviour_Skeleton skeleton) 
     {
         short tempThermoValue = 0;
@@ -238,9 +203,11 @@ public class FFBManager : MonoBehaviour
                     continue;
             }
 
-            float distance = Vector3.Distance(position, collider.transform.position + objectToggle.radiusOffset);
+            if (objectToggle.radiusTemp == 0 || objectToggle.grabbedTemp > 0)
+                continue;
 
-            if(objectToggle.grabbedTemp > 0 || distance > objectToggle.radiusTemp)
+            float distance = Vector3.Distance(position, collider.transform.position + objectToggle.radiusOffset);
+            if(distance > objectToggle.radiusTemp)
                 continue;
 
             if (objectToggle.isHot)
@@ -263,7 +230,7 @@ public class FFBManager : MonoBehaviour
         {
             thermoValueRight = tempThermoValue;
         }
-}
+    }
 
     public void SetHapticFeedbackFromSkeleton(Hand hand, SteamVR_Behaviour_Skeleton skeleton)
     {
@@ -316,6 +283,41 @@ public class FFBManager : MonoBehaviour
             Debug.Log("Haptics set: " + fingerHaptics[0] + ", " + fingerHaptics[1] + ", " + fingerHaptics[2] + ", " + fingerHaptics[3] + ", " + fingerHaptics[4]);
             _SetHapticFeedback(hand.handType == SteamVR_Input_Sources.LeftHand ? ETrackedControllerRole.LeftHand : ETrackedControllerRole.RightHand,
                 new VRHFBInput(fingerHaptics[0], fingerHaptics[1], fingerHaptics[2], fingerHaptics[3], fingerHaptics[4]));
+        }
+    }
+
+    public void SetForceFeedbackByCurl(Hand hand, VRFFBInput input)
+    {
+        _SetForceFeedback(hand, input);
+    }
+
+    public void RelaxForceFeedback(Hand hand)
+    {
+        VRFFBInput input = new VRFFBInput(0, 0, 0, 0, 0);
+        _SetForceFeedback(hand, input);
+    }
+
+    public void SetThermoFeedbackFromObject(Hand hand, short thermoValue)
+    {
+        if (hand.handType == SteamVR_Input_Sources.LeftHand)
+        {
+            _SetThermoFeedback(ETrackedControllerRole.LeftHand, new VRTFBInput(thermoValue));
+        }
+        else
+        {
+            _SetThermoFeedback(ETrackedControllerRole.RightHand, new VRTFBInput(thermoValue));
+        }
+    }
+
+    public void SetHapticFeedbackFromObject(Hand hand, short hapticTime)
+    {
+        if (hand.handType == SteamVR_Input_Sources.LeftHand)
+        {
+            _SetHapticFeedback(ETrackedControllerRole.LeftHand, new VRHFBInput(hapticTime, hapticTime, hapticTime, hapticTime, hapticTime));
+        }
+        else
+        {
+            _SetHapticFeedback(ETrackedControllerRole.RightHand, new VRHFBInput(hapticTime, hapticTime, hapticTime, hapticTime, hapticTime));
         }
     }
 
@@ -477,7 +479,7 @@ class NamedPipesProvider
     {
         pipeControllerRole = controllerRole;
         forcePipe = new NamedPipeClientStream("vrapplication/ffb/curl/" + (controllerRole == ETrackedControllerRole.RightHand ? "right" : "left"));
-        thermoPipe = new NamedPipeClientStream("vrapplication/ffb/thermo/" + (controllerRole == ETrackedControllerRole.RightHand ? "right" : "left"));
+        thermoPipe = new NamedPipeClientStream("vrapplication/ffb/thermal/" + (controllerRole == ETrackedControllerRole.RightHand ? "right" : "left"));
         hapticPipe = new NamedPipeClientStream("vrapplication/ffb/haptic/" + (controllerRole == ETrackedControllerRole.RightHand ? "right" : "left"));
     }
 
