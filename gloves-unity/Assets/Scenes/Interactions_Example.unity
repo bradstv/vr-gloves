@@ -2766,6 +2766,50 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &228008501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 228008495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10d52fbd34d0dbb4cb0129dbf2afbe65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isHot: 0
+  isCold: 1
+  grabbedTemp: 500
+  radiusTemp: 0
+  radiusOffset: {x: 0, y: 0, z: 0}
+  radiusHaptics: 1
+  grabbedHaptics: 1
+  hapticTime: 150
+--- !u!114 &228008502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 228008495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4153b26428ccf041950b92c057812a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onHandHoverBegin:
+    m_PersistentCalls:
+      m_Calls: []
+  onHandHoverEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  onAttachedToHand:
+    m_PersistentCalls:
+      m_Calls: []
+  onDetachedFromHand:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &229188962
 GameObject:
   m_ObjectHideFlags: 0
@@ -3041,6 +3085,30 @@ MonoBehaviour:
   highlightOnHover: 1
   hideHighlight: []
   hoverPriority: 0
+--- !u!114 &250457488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 250457482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4153b26428ccf041950b92c057812a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onHandHoverBegin:
+    m_PersistentCalls:
+      m_Calls: []
+  onHandHoverEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  onAttachedToHand:
+    m_PersistentCalls:
+      m_Calls: []
+  onDetachedFromHand:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &250609736
 GameObject:
   m_ObjectHideFlags: 0
@@ -4910,10 +4978,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isHot: 1
   isCold: 0
-  triggerHaptics: 0
-  hapticTime: 1000
-  heatRadius: 2.36
+  grabbedTemp: 0
+  radiusTemp: 0
   radiusOffset: {x: 0, y: 0, z: 0}
+  radiusHaptics: 0
+  grabbedHaptics: 0
+  hapticTime: 1000
 --- !u!4 &377286195 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6744061236805062037, guid: e4f26a2795077c749a9c01f2c33c797d, type: 3}
@@ -8128,6 +8198,30 @@ MonoBehaviour:
   highlightOnHover: 1
   hideHighlight: []
   hoverPriority: 0
+--- !u!114 &727889648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 727889642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4153b26428ccf041950b92c057812a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onHandHoverBegin:
+    m_PersistentCalls:
+      m_Calls: []
+  onHandHoverEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  onAttachedToHand:
+    m_PersistentCalls:
+      m_Calls: []
+  onDetachedFromHand:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &733478931
 GameObject:
   m_ObjectHideFlags: 0
@@ -13922,6 +14016,30 @@ MonoBehaviour:
   highlightOnHover: 1
   hideHighlight: []
   hoverPriority: 0
+--- !u!114 &1251612236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1251612230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4153b26428ccf041950b92c057812a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onHandHoverBegin:
+    m_PersistentCalls:
+      m_Calls: []
+  onHandHoverEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  onAttachedToHand:
+    m_PersistentCalls:
+      m_Calls: []
+  onDetachedFromHand:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1264905860
 GameObject:
   m_ObjectHideFlags: 0
@@ -15325,10 +15443,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isHot: 0
   isCold: 1
-  triggerHaptics: 0
-  hapticTime: 1000
-  heatRadius: 1.25
+  grabbedTemp: 0
+  radiusTemp: 0
   radiusOffset: {x: 0.27, y: 0.95, z: 0.27}
+  radiusHaptics: 0
+  grabbedHaptics: 0
+  hapticTime: 1000
 --- !u!1 &1371103752
 GameObject:
   m_ObjectHideFlags: 0
@@ -16073,6 +16193,30 @@ MonoBehaviour:
   highlightOnHover: 1
   hideHighlight: []
   hoverPriority: 0
+--- !u!114 &1418159404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1418159398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4153b26428ccf041950b92c057812a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onHandHoverBegin:
+    m_PersistentCalls:
+      m_Calls: []
+  onHandHoverEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  onAttachedToHand:
+    m_PersistentCalls:
+      m_Calls: []
+  onDetachedFromHand:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1423219942
 GameObject:
   m_ObjectHideFlags: 0
@@ -16593,6 +16737,30 @@ MonoBehaviour:
   previewPoseSelection: 0
   blendingBehaviours: []
   scale: 1
+--- !u!114 &1435441431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1435441425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4153b26428ccf041950b92c057812a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onHandHoverBegin:
+    m_PersistentCalls:
+      m_Calls: []
+  onHandHoverEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  onAttachedToHand:
+    m_PersistentCalls:
+      m_Calls: []
+  onDetachedFromHand:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &1435441432 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4006903645291198, guid: 680cc712cb55643a38fb5bec71bcc683, type: 3}
@@ -18618,6 +18786,30 @@ MonoBehaviour:
   highlightOnHover: 1
   hideHighlight: []
   hoverPriority: 0
+--- !u!114 &1570374983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1570374977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4153b26428ccf041950b92c057812a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onHandHoverBegin:
+    m_PersistentCalls:
+      m_Calls: []
+  onHandHoverEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  onAttachedToHand:
+    m_PersistentCalls:
+      m_Calls: []
+  onDetachedFromHand:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1573696685
 GameObject:
   m_ObjectHideFlags: 0
@@ -24538,10 +24730,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isHot: 0
   isCold: 0
-  triggerHaptics: 1
-  hapticTime: 200
-  heatRadius: 0.25
+  grabbedTemp: 0
+  radiusTemp: 0
   radiusOffset: {x: 0, y: 0, z: 0}
+  radiusHaptics: 0
+  grabbedHaptics: 0
+  hapticTime: 200
 --- !u!1 &2016156706
 GameObject:
   m_ObjectHideFlags: 0
@@ -25314,10 +25508,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isHot: 0
   isCold: 0
-  triggerHaptics: 0
-  hapticTime: 1000
-  heatRadius: 0.25
+  grabbedTemp: 0
+  radiusTemp: 0
   radiusOffset: {x: 0, y: 0, z: 0}
+  radiusHaptics: 0
+  grabbedHaptics: 0
+  hapticTime: 1000
 --- !u!1 &2100956524
 GameObject:
   m_ObjectHideFlags: 0
