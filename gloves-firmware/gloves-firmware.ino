@@ -55,7 +55,7 @@
 #define PIN_THERMAL_ENA      26
 #define THERMAL_PWM_CHANNEL  15
 
-#define ALWAYS_CALIBRATING CALIBRATION_LOOPS == 0
+#define ALWAYS_CALIBRATING CALIBRATION_LOOPS == -1
 
 bool calibrate = false;
 bool calibButton = false;

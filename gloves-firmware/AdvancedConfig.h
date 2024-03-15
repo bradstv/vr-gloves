@@ -1,7 +1,7 @@
 //Advanced settings, only for the pros XD
 
 #define LOOP_TIME 1 //How much time between data sends (ms), set to 0 for a good time :)
-#define CALIBRATION_LOOPS 0//How many loops should be calibrated. Set to -1 to always be calibrated.
+#define CALIBRATION_LOOPS -1//How many loops should be calibrated. Set to -1 to always be calibrated.
 
 #define NUM_FINGERS 5
 
@@ -32,5 +32,5 @@
 #define MEDIAN_SAMPLES 10
 
 //intermediate filtering. Options are INTERFILTER_NONE, INTERFILTER_LIMITS (filter is only used for limit calib), INTERFILTER_ALL (filter all the way)
-#define INTERFILTER_MODE INTERFILTER_LIMITS
+#define INTERFILTER_MODE INTERFILTER_ALL
 #define INTERFILTER_SAMPLES 10
