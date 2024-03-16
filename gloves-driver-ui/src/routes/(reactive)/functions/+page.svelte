@@ -23,6 +23,11 @@
 		title as haptic_title,
 		description as haptic_description
 	} from '$lib/functions/HapticCalibration.svelte';
+
+	import FingerCalibration, {
+		title as finger_title,
+		description as finger_description
+	} from '$lib/functions/FingerCalibration.svelte';
 </script>
 
 <div class="flex-grow my-10">
@@ -59,6 +64,13 @@
 							<td class="px-6 py-4 text-sm"> <strong>{pose_title}</strong> <br><br> {pose_description}</td>
 							<td class="px-6 py-4 whitespace-nowrap text-sm flex flex-col">
 								<PoseCalibration />
+							</td>
+						</tr>
+
+						<tr>
+							<td class="px-6 py-4 text-sm"> <strong>{finger_title}</strong> <br><br> {finger_description}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm flex flex-col">
+								<FingerCalibration />
 							</td>
 						</tr>
 

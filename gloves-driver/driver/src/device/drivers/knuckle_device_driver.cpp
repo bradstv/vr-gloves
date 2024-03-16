@@ -122,6 +122,24 @@ class KnuckleDeviceDriver::Impl {
 
       return true;
     });
+
+    external_server.RegisterFunctionCallback("finger_calibration/" + std::string(IsRightHand() ? "right" : "left"), [&](const std::string &data) {
+      const nlohmann::json json = nlohmann::json::parse(data);
+
+      bool save_inter = json["save_inter"];
+      bool save_travel = json["save_travel"];
+      bool clear_data = json["clear_data"];
+
+      og::Output output{};
+      output.type = og::kOutputData_Type_FingerCalibData;
+
+      og::OutputFingerCalibData finger_calibration_data = {save_inter, save_travel, clear_data};
+      output.data.finger_calibration_data = finger_calibration_data;
+
+      device_->Output(output);
+
+      return true;
+    });
   }
 
   vr::EVRInitError Activate(uint32_t device_id) {

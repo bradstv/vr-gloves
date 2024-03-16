@@ -154,6 +154,12 @@ namespace og {
     int16_t ring;
     int16_t pinky;
   };
+  //finger calib data state from server to device
+  struct OutputFingerCalibData {
+    bool save_inter;
+    bool save_travel;
+    bool clear_data;
+  };
   // haptic vibration output from server to device
   struct OutputHapticData {
     float duration;
@@ -171,6 +177,7 @@ namespace og {
     OutputForceFeedbackData force_feedback_data;
     OutputThermalFeedbackData thermal_feedback_data;
     OutputHapticFeedbackData haptic_feedback_data;
+    OutputFingerCalibData finger_calibration_data;
   };
   enum OutputDataType {
     kOutputDataType_Empty,
@@ -178,7 +185,8 @@ namespace og {
     kOutputDataType_Haptic,
     kOutputData_Type_ForceFeedback,
     kOutputData_Type_ThermalFeedback,
-    kOutputData_Type_HapticFeedback
+    kOutputData_Type_HapticFeedback,
+    kOutputData_Type_FingerCalibData
   };
 
   // output data from driver to glove

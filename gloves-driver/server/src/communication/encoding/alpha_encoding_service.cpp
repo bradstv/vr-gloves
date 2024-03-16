@@ -340,6 +340,25 @@ std::string AlphaEncodingService::EncodePacket(const og::Output& output) {
           alpha_encoding_output_key_strings.at(kAlphaEncodingKey_OutHapticAmplitude).c_str(),
           data.amplitude);
     }
+    
+    case og::kOutputData_Type_FingerCalibData: {
+      const og::OutputFingerCalibData& data = output.data.finger_calibration_data;
+
+      if (data.clear_data) {
+        return StringFormat("%sClearData\n", alpha_encoding_output_key_strings.at(kAlphaEncodingKey_Info).c_str());
+      }
+
+      std::string result = "";
+      if (data.save_inter) {
+        result += StringFormat("%sSaveInter\n", alpha_encoding_output_key_strings.at(kAlphaEncodingKey_Info).c_str());
+      }
+      
+      if (data.save_travel) {
+        result += StringFormat("%sSaveTravel\n", alpha_encoding_output_key_strings.at(kAlphaEncodingKey_Info).c_str());
+      }
+
+      return result;
+    }
 
     default:
       logger.Log(og::kLoggerLevel_Warning, "Unable to deduce output data type.");
