@@ -8,10 +8,16 @@ using Valve.VR.InteractionSystem;
 
 public class onHandUpdate : MonoBehaviour
 {
+    public float thermalWaitTime = 1.0f;
+    public float hapticWaitTime = 0.5f;
+
     private Hand hand;
     private SteamVR_Behaviour_Skeleton skeleton;
     private bool isSubscribed = false;
     private FFBManager _ffbManager;
+
+    private float thermalTimer = 0.0f;
+    private float hapticTimer = 0.0f;
     private void Awake()
     {
         hand = GetComponent<Hand>();
@@ -30,21 +36,25 @@ public class onHandUpdate : MonoBehaviour
             skeleton = hand.skeleton;
             skeleton.onBoneTransformsUpdatedEvent += OnTransformsUpdated;
             isSubscribed = true;
-            Debug.Log("Subscribed");
+            Debug.Log("Subscribed to Hand Updates");
         }
     }
 
     private void OnTransformsUpdated(SteamVR_Behaviour_Skeleton skeleton, SteamVR_Input_Sources inputSource)
     {
-        _ffbManager.SetThermoFeedbackFromSkeleton(hand, skeleton);
-
-        //only set haptics from hand updates if not holding an object
-        if (hand.currentAttachedObject == null)
+        //only set radius thermal and haptics after specified amount of time (prevents spamming driver with fb packets)
+        if (Time.time > thermalTimer + thermalWaitTime)
         {
-            _ffbManager.SetHapticFeedbackFromSkeleton(hand, skeleton);
+            _ffbManager.SetThermalFeedbackFromSkeleton(hand, skeleton);
+            thermalTimer = Time.time;
         }
 
-       
+        //only set haptics if not holding an object and after specified time
+        if (hand.currentAttachedObject == null && Time.time > hapticTimer + hapticWaitTime)
+        {
+            _ffbManager.SetHapticFeedbackFromSkeleton(hand, skeleton);
+            hapticTimer = Time.time;
+        }  
     }
 }
 

@@ -46,11 +46,11 @@ public class FFBClient : MonoBehaviour
         {
             if (objectToggle.isHot)
             {
-                _ffbManager.SetThermoFeedbackFromObject(hand, objectToggle.grabbedTemp);
+                _ffbManager.SetThermalFeedbackFromObject(hand, objectToggle.grabbedTemp);
             }
             else if (objectToggle.isCold)
             {
-                _ffbManager.SetThermoFeedbackFromObject(hand, (short)-objectToggle.grabbedTemp);
+                _ffbManager.SetThermalFeedbackFromObject(hand, (short)-objectToggle.grabbedTemp);
             }
         }
 
@@ -70,7 +70,7 @@ public class FFBClient : MonoBehaviour
 
         if (objectToggle.grabbedTemp > 0)
         {
-            _ffbManager.SetThermoFeedbackFromObject(hand, 0);
+            _ffbManager.SetThermalFeedbackFromObject(hand, 0);
         }
 
         if (objectToggle.grabbedHaptics)

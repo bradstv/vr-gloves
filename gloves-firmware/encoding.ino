@@ -15,7 +15,7 @@ char* encodeData(int* flexion, bool triggerButton, bool grab, bool pinch)
     return stringToEncode;
 }
 
-void decodeData(char* stringToDecode, int* parsedThermal, int* parsedServo, int* parsedHaptic)
+bool decodeData(char* stringToDecode, int* parsedThermal, int* parsedServo, int* parsedHaptic)
 {
     //Check if a Z command was received
     if (strchr(stringToDecode, 'Z') != NULL) 
@@ -36,15 +36,10 @@ void decodeData(char* stringToDecode, int* parsedThermal, int* parsedServo, int*
             saveTravel();
             toReturn = true;
         }
-        if (strstr(stringToDecode, "Feedback") != NULL) 
-        {
-            isUsingFeedback = !isUsingFeedback;
-            toReturn = true;
-        }
 
         if (toReturn)
         {
-            return;
+            return false;
         }
     }
 
@@ -61,6 +56,8 @@ void decodeData(char* stringToDecode, int* parsedThermal, int* parsedServo, int*
     parsedHaptic[2] = getArgument(stringToDecode, 'L'); //middle
     parsedHaptic[3] = getArgument(stringToDecode, 'M'); //ring
     parsedHaptic[4] = getArgument(stringToDecode, 'N'); //pinky
+
+    return true;
 }
 
 int getArgument(char* stringToDecode, char command)

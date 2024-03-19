@@ -47,6 +47,11 @@ void writeServos(int* parsedServo)
 
 void writeThermal(int* parsedThermal)
 {
+    if(parsedThermal[0] == -1) //hacky fix for thermals turning off when other serial packets are received
+    {
+        return;
+    }
+    
     int thermalValues[1];
     mapThermalValue(parsedThermal, thermalValues);
 

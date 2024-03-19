@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand:
     inputSource: 1
-    thumbFingerMovementType: 2
+    thumbFingerMovementType: 0
     indexFingerMovementType: 2
     middleFingerMovementType: 2
     ringFingerMovementType: 2
@@ -89,7 +89,7 @@ MonoBehaviour:
     - {x: 0.7584072, y: -0.6393418, z: -0.12667806, w: -0.0036594148}
   rightHand:
     inputSource: 2
-    thumbFingerMovementType: 2
+    thumbFingerMovementType: 0
     indexFingerMovementType: 2
     middleFingerMovementType: 2
     ringFingerMovementType: 2
@@ -133,7 +133,7 @@ MonoBehaviour:
     boneRotations:
     - {x: 0.03854504, y: 0.6986001, z: -0.023754336, w: 0.71407837}
     - {x: -0.078608155, y: -0.92027926, z: 0.3792963, w: -0.055146642}
-    - {x: -0.35875407, y: -0.7378183, z: 0.25350896, w: 0.5124969}
+    - {x: -0.35875404, y: -0.73781824, z: 0.25350893, w: 0.5124968}
     - {x: 0.082466364, y: -0.019282304, z: -0.057426177, w: 0.9947511}
     - {x: -0.09427632, y: -0.007877999, z: -0.15488166, w: 0.98339295}
     - {x: -1.3877788e-17, y: -1.3877788e-17, z: -5.551115e-17, w: 1}

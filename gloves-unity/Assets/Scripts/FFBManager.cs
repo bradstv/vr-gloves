@@ -21,13 +21,11 @@ public class FFBManager : MonoBehaviour
     private FFBProvider _ffbProviderLeft;
     private FFBProvider _ffbProviderRight;
 
-    private short thermoValueLeft = 0;
-    private short thermoValueRight = 0;
+    private short thermalValueLeft = 0;
+    private short thermalValueRight = 0;
 
     private short[] fingerHapticsLeft = new short[] { -1, -1, -1, -1, -1 };
     private short[] fingerHapticsRight = new short[] { -1, -1, -1, -1, -1 };
-
-    public float thermoLoopTime = 1.0f;
 
     //Whether to inject the FFBProvider script into all interactable game objects
     public bool injectFfbProvider = true;
@@ -35,8 +33,6 @@ public class FFBManager : MonoBehaviour
     {
         _ffbProviderLeft = new FFBProvider(ETrackedControllerRole.LeftHand);
         _ffbProviderRight = new FFBProvider(ETrackedControllerRole.RightHand);
-        StartCoroutine(thermoThread(ETrackedControllerRole.LeftHand));
-        StartCoroutine(thermoThread(ETrackedControllerRole.RightHand));
 
         if (injectFfbProvider)
         {
@@ -63,9 +59,9 @@ public class FFBManager : MonoBehaviour
         }
     }
 
-    private void _SetThermoFeedback(ETrackedControllerRole controllerRole, VRTFBInput input)
+    private void _SetThermalFeedback(Hand hand, VRTFBInput input)
     {
-        if (controllerRole == ETrackedControllerRole.LeftHand)
+        if (hand.handType == SteamVR_Input_Sources.LeftHand)
         {
             _ffbProviderLeft.SetTFB(input);
         }
@@ -75,42 +71,15 @@ public class FFBManager : MonoBehaviour
         }
     }
 
-    private void _SetHapticFeedback(ETrackedControllerRole controllerRole, VRHFBInput input)
+    private void _SetHapticFeedback(Hand hand, VRHFBInput input)
     {
-        if (controllerRole == ETrackedControllerRole.LeftHand)
+        if (hand.handType == SteamVR_Input_Sources.LeftHand)
         {
             _ffbProviderLeft.SetHFB(input);
         }
         else
         {
             _ffbProviderRight.SetHFB(input);
-        }
-    }
-
-    private short getThermoValueForHand(ETrackedControllerRole controllerRole)
-    {
-        if (controllerRole == ETrackedControllerRole.LeftHand)
-        {
-            return thermoValueLeft;
-        }
-        else
-        {
-            return thermoValueRight;
-        }
-    }
-
-    private IEnumerator thermoThread(ETrackedControllerRole controllerRole)
-    {
-        short currentValue = 0;
-        while (true)
-        {
-            short thermoValue = getThermoValueForHand(controllerRole);
-            if(currentValue != thermoValue)
-            {
-                _SetThermoFeedback(controllerRole, new VRTFBInput(thermoValue));
-                currentValue = thermoValue;
-            }
-            yield return new WaitForSeconds(thermoLoopTime);
         }
     }
 
@@ -142,11 +111,11 @@ public class FFBManager : MonoBehaviour
             //get the finger for the current bone
             int finger = SteamVR_Skeleton_JointIndexes.GetFingerForBone(boneIndex);
 
-            //no curl values for free fingers
+            //max curl for free fingers
             SteamVR_Skeleton_FingerExtensionTypes extensionType = skeleton.GetMovementTypeForBone(boneIndex);
-            if (extensionType == SteamVR_Skeleton_FingerExtensionTypes.Free)
+            if (extensionType == SteamVR_Skeleton_FingerExtensionTypes.Free && finger >= 0)
             {
-                fingerCurlValues[finger].Add(0.0f);
+                fingerCurlValues[finger].Add(1.0f);
                 continue;
             }
 
@@ -154,13 +123,12 @@ public class FFBManager : MonoBehaviour
             float openToPoser = Quaternion.Angle(openHand.boneRotations[boneIndex], skeleton.boneRotations[boneIndex]);
 
             //calculate angle from open to closed
-            float openToClosed =
-                Quaternion.Angle(openHand.boneRotations[boneIndex], closedHand.boneRotations[boneIndex]);
+            float openToClosed = Quaternion.Angle(openHand.boneRotations[boneIndex], closedHand.boneRotations[boneIndex]);
 
             //get the ratio between open to poser and open to closed
-            float curl = openToPoser / openToClosed;
+            float curl = Mathf.Clamp(openToPoser / openToClosed, 0.0f, 1.0f);
 
-            if (!float.IsNaN(curl) && curl != 0 && finger >= 0)
+            if (!float.IsNaN(curl) && !float.IsInfinity(curl) && curl != 0 && finger >= 0)
             {
                 //Add it to the list of bone angles for averaging later
                 fingerCurlValues[finger].Add(curl);
@@ -174,21 +142,19 @@ public class FFBManager : MonoBehaviour
             float enumerator = 0;
             for (int j = 0; j < fingerCurlValues[i].Count; j++)
             {
-                enumerator += fingerCurlValues[i][j];
+                enumerator += fingerCurlValues[i][j];           
             }
 
             //The value we to pass is where 0 is full movement flexibility, so invert.
             fingerCurlAverages[i] = Convert.ToInt16(1000 - (Mathf.FloorToInt(enumerator / fingerCurlValues[i].Count * 1000)));
-
-            //Debug.Log(fingerCurlAverages[i]);
         }
-
+        Debug.Log("Set FFB: " + fingerCurlAverages[0] + " " + fingerCurlAverages[1] + " " + fingerCurlAverages[2] + " " + fingerCurlAverages[3] + " " + fingerCurlAverages[4]);
         _SetForceFeedback(hand, new VRFFBInput(fingerCurlAverages[0], fingerCurlAverages[1], fingerCurlAverages[2], fingerCurlAverages[3], fingerCurlAverages[4]));
     }
 
-    public void SetThermoFeedbackFromSkeleton(Hand hand, SteamVR_Behaviour_Skeleton skeleton) 
+    public void SetThermalFeedbackFromSkeleton(Hand hand, SteamVR_Behaviour_Skeleton skeleton) 
     {
-        short tempThermoValue = 0;
+        short thermalValue = 0;
         Vector3 position = skeleton.GetBonePosition(0);
         Collider[] colliders = Physics.OverlapSphere(position, 2.0f);
         foreach (Collider collider in colliders)
@@ -212,23 +178,29 @@ public class FFBManager : MonoBehaviour
 
             if (objectToggle.isHot)
             {
-                tempThermoValue += mapDistance(distance, 0, objectToggle.radiusTemp, 1000, 0);
-                Debug.Log("Close to a Hot Object!");
+                thermalValue += mapDistance(distance, 0, objectToggle.radiusTemp, 1000, 0);
             }
             else if (objectToggle.isCold)
             {
-                tempThermoValue += mapDistance(distance, 0, objectToggle.radiusTemp, -1000, 0);
-                Debug.Log("Close to a Cold Object!");
+                thermalValue += mapDistance(distance, 0, objectToggle.radiusTemp, -1000, 0);
             }
         }
 
         if (hand.handType == SteamVR_Input_Sources.LeftHand)
         {
-            thermoValueLeft = tempThermoValue;
+            if(thermalValue != thermalValueLeft)
+            {
+                _SetThermalFeedback(hand, new VRTFBInput(thermalValue));
+                thermalValueLeft = thermalValue;
+            }
         }
         else
         {
-            thermoValueRight = tempThermoValue;
+            if (thermalValue != thermalValueRight)
+            {
+                _SetThermalFeedback(hand, new VRTFBInput(thermalValue));
+                thermalValueRight = thermalValue;
+            }
         }
     }
 
@@ -281,8 +253,7 @@ public class FFBManager : MonoBehaviour
         if(anyFingerStartedTouching)
         {
             Debug.Log("Haptics set: " + fingerHaptics[0] + ", " + fingerHaptics[1] + ", " + fingerHaptics[2] + ", " + fingerHaptics[3] + ", " + fingerHaptics[4]);
-            _SetHapticFeedback(hand.handType == SteamVR_Input_Sources.LeftHand ? ETrackedControllerRole.LeftHand : ETrackedControllerRole.RightHand,
-                new VRHFBInput(fingerHaptics[0], fingerHaptics[1], fingerHaptics[2], fingerHaptics[3], fingerHaptics[4]));
+            _SetHapticFeedback(hand, new VRHFBInput(fingerHaptics[0], fingerHaptics[1], fingerHaptics[2], fingerHaptics[3], fingerHaptics[4]));
         }
     }
 
@@ -291,34 +262,21 @@ public class FFBManager : MonoBehaviour
         _SetForceFeedback(hand, input);
     }
 
+
     public void RelaxForceFeedback(Hand hand)
     {
         VRFFBInput input = new VRFFBInput(0, 0, 0, 0, 0);
         _SetForceFeedback(hand, input);
     }
 
-    public void SetThermoFeedbackFromObject(Hand hand, short thermoValue)
+    public void SetThermalFeedbackFromObject(Hand hand, short thermalValue)
     {
-        if (hand.handType == SteamVR_Input_Sources.LeftHand)
-        {
-            _SetThermoFeedback(ETrackedControllerRole.LeftHand, new VRTFBInput(thermoValue));
-        }
-        else
-        {
-            _SetThermoFeedback(ETrackedControllerRole.RightHand, new VRTFBInput(thermoValue));
-        }
+        _SetThermalFeedback(hand, new VRTFBInput(thermalValue));
     }
 
     public void SetHapticFeedbackFromObject(Hand hand, short hapticTime)
     {
-        if (hand.handType == SteamVR_Input_Sources.LeftHand)
-        {
-            _SetHapticFeedback(ETrackedControllerRole.LeftHand, new VRHFBInput(hapticTime, hapticTime, hapticTime, hapticTime, hapticTime));
-        }
-        else
-        {
-            _SetHapticFeedback(ETrackedControllerRole.RightHand, new VRHFBInput(hapticTime, hapticTime, hapticTime, hapticTime, hapticTime));
-        }
+        _SetHapticFeedback(hand, new VRHFBInput(hapticTime, hapticTime, hapticTime, hapticTime, hapticTime));
     }
 
     private short mapDistance(float distance, float minDistance, float maxDistance, short minValue, short maxValue)
@@ -409,7 +367,7 @@ public struct VRFFBInput
 
 public struct VRTFBInput
 {
-    //Thermo goes between 0-1000
+    //Thermal goes between 0-1000
     public VRTFBInput(short value)
     {
         this.value = value;
@@ -472,14 +430,14 @@ class FFBProvider
 class NamedPipesProvider
 {
     private NamedPipeClientStream forcePipe;
-    private NamedPipeClientStream thermoPipe;
+    private NamedPipeClientStream thermalPipe;
     private NamedPipeClientStream hapticPipe;
     private ETrackedControllerRole pipeControllerRole;
     public NamedPipesProvider(ETrackedControllerRole controllerRole)
     {
         pipeControllerRole = controllerRole;
         forcePipe = new NamedPipeClientStream("vrapplication/ffb/curl/" + (controllerRole == ETrackedControllerRole.RightHand ? "right" : "left"));
-        thermoPipe = new NamedPipeClientStream("vrapplication/ffb/thermal/" + (controllerRole == ETrackedControllerRole.RightHand ? "right" : "left"));
+        thermalPipe = new NamedPipeClientStream("vrapplication/ffb/thermal/" + (controllerRole == ETrackedControllerRole.RightHand ? "right" : "left"));
         hapticPipe = new NamedPipeClientStream("vrapplication/ffb/haptic/" + (controllerRole == ETrackedControllerRole.RightHand ? "right" : "left"));
     }
 
@@ -497,12 +455,12 @@ class NamedPipesProvider
 
         try
         {
-            thermoPipe.Connect();
-            Debug.Log("Successfully connected to " + (pipeControllerRole == ETrackedControllerRole.RightHand ? "right" : "left") + " pipe: thermo");
+            thermalPipe.Connect();
+            Debug.Log("Successfully connected to " + (pipeControllerRole == ETrackedControllerRole.RightHand ? "right" : "left") + " pipe: thermal");
         }
         catch (Exception e)
         {
-            Debug.Log("Unable to connect to " + (pipeControllerRole == ETrackedControllerRole.RightHand ? "right" : "left") + " thermo pipe. Error: " + e);
+            Debug.Log("Unable to connect to " + (pipeControllerRole == ETrackedControllerRole.RightHand ? "right" : "left") + " thermal pipe. Error: " + e);
         }
 
         try
@@ -524,9 +482,9 @@ class NamedPipesProvider
             forcePipe.Dispose();
         }
 
-        if (thermoPipe.IsConnected)
+        if (thermalPipe.IsConnected)
         {
-            thermoPipe.Dispose();
+            thermalPipe.Dispose();
         }
 
         if (hapticPipe.IsConnected)
@@ -560,7 +518,7 @@ class NamedPipesProvider
 
     public bool TFSend(VRTFBInput input)
     {
-        if (thermoPipe.IsConnected)
+        if (thermalPipe.IsConnected)
         {
             Debug.Log("running task");
             int size = Marshal.SizeOf(input);
@@ -571,9 +529,9 @@ class NamedPipesProvider
             Marshal.Copy(ptr, arr, 0, size);
             Marshal.FreeHGlobal(ptr);
 
-            thermoPipe.Write(arr, 0, size);
+            thermalPipe.Write(arr, 0, size);
 
-            Debug.Log("Sent thermo feedback message.");
+            Debug.Log("Sent thermal feedback message.");
 
             return true;
         }

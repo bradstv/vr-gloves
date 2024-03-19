@@ -289,7 +289,7 @@ std::string AlphaEncodingService::EncodePacket(const og::Output& output) {
       const og::OutputForceFeedbackData& data = output.data.force_feedback_data;
 
       return StringFormat(
-          "%s%d%s%d%s%d%s%d%s%d\n",
+          "%s%d%s%d%s%d%s%d%s%d",
           alpha_encoding_output_key_strings.at(kAlphaEncodingKey_ThumbCurl).c_str(),
           data.thumb,
           alpha_encoding_output_key_strings.at(kAlphaEncodingKey_IndexCurl).c_str(),
@@ -306,7 +306,7 @@ std::string AlphaEncodingService::EncodePacket(const og::Output& output) {
       const og::OutputThermalFeedbackData& data = output.data.thermal_feedback_data;
 
       return StringFormat(
-          "%s%d\n",
+          "%s%d",
           alpha_encoding_output_key_strings.at(kAlphaEncodingKey_ThermalValue).c_str(),
           data.value);
     }
@@ -315,7 +315,7 @@ std::string AlphaEncodingService::EncodePacket(const og::Output& output) {
       const og::OutputHapticFeedbackData& data = output.data.haptic_feedback_data;
 
       return StringFormat(
-          "%s%d%s%d%s%d%s%d%s%d\n",
+          "%s%d%s%d%s%d%s%d%s%d",
           alpha_encoding_output_key_strings.at(kAlphaEncodingKey_ThumbHaptic).c_str(),
           data.thumb,
           alpha_encoding_output_key_strings.at(kAlphaEncodingKey_IndexHaptic).c_str(),
@@ -332,7 +332,7 @@ std::string AlphaEncodingService::EncodePacket(const og::Output& output) {
       const og::OutputHapticData& data = output.data.haptic_data;
 
       return StringFormat(
-          "%s%.2f%s%.2f%s%.2f\n",
+          "%s%.2f%s%.2f%s%.2f",
           alpha_encoding_output_key_strings.at(kAlphaEncodingKey_OutHapticFrequency).c_str(),
           data.frequency,
           alpha_encoding_output_key_strings.at(kAlphaEncodingKey_OutHapticDuration).c_str(),
@@ -345,16 +345,16 @@ std::string AlphaEncodingService::EncodePacket(const og::Output& output) {
       const og::OutputFingerCalibData& data = output.data.finger_calibration_data;
 
       if (data.clear_data) {
-        return StringFormat("%sClearData\n", alpha_encoding_output_key_strings.at(kAlphaEncodingKey_Info).c_str());
+        return StringFormat("%sClearData", alpha_encoding_output_key_strings.at(kAlphaEncodingKey_Info).c_str());
       }
 
       std::string result = "";
       if (data.save_inter) {
-        result += StringFormat("%sSaveInter\n", alpha_encoding_output_key_strings.at(kAlphaEncodingKey_Info).c_str());
+        result += StringFormat("%sSaveInter", alpha_encoding_output_key_strings.at(kAlphaEncodingKey_Info).c_str());
       }
       
       if (data.save_travel) {
-        result += StringFormat("%sSaveTravel\n", alpha_encoding_output_key_strings.at(kAlphaEncodingKey_Info).c_str());
+        result += StringFormat("%sSaveTravel", alpha_encoding_output_key_strings.at(kAlphaEncodingKey_Info).c_str());
       }
 
       return result;
@@ -363,7 +363,7 @@ std::string AlphaEncodingService::EncodePacket(const og::Output& output) {
     default:
       logger.Log(og::kLoggerLevel_Warning, "Unable to deduce output data type.");
     case og::kOutputDataType_Empty: {
-      return "\n";
+      return "";
     }
   }
 }

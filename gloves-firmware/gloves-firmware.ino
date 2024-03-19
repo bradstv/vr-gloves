@@ -131,7 +131,7 @@ void loop()
     mainMicrosTotal += mainMicros;
     lastMainMicros = micros();
 
-    if (!digitalRead(27))
+    if (!digitalRead(13))
     {
         if (!latch)
         {
@@ -144,7 +144,7 @@ void loop()
     {
         latch = false;
     }
-    
+
     if (comOpen())
     {
         calibButton = getButton(PIN_CALIB) != INVERT_CALIB;
@@ -182,21 +182,20 @@ void loop()
 
         serialOutput(encodeData(fingerPosCopy, triggerButton, grabButton, pinchButton));
 
-        if(isUsingFeedback)
+        char received[100];
+        if(serialRead(received))
         {
-            char received[100];
-            if(serialRead(received))
+            int parsedThermal[1];
+            int parsedServo[5];
+            int parsedHaptic[5];
+            if(decodeData(received, parsedThermal, parsedServo, parsedHaptic))
             {
-                int parsedThermal[1];
-                int parsedServo[5];
-                int parsedHaptic[5];
-                decodeData(received, parsedThermal, parsedServo, parsedHaptic);
                 writeThermal(parsedThermal);
                 writeServos(parsedServo);
                 writeHaptics(parsedHaptic);
             }
-            checkHaptics();
         }
+        checkHaptics();
     }
     delay(LOOP_TIME);
 }
