@@ -135,13 +135,6 @@ void getFingerPositions(bool calibrating, bool reset)
     }
     #endif
 
-    #if FLIP_SPLAY
-    for (int i = NUM_FINGERS; i < 2 * NUM_FINGERS; i++)
-    {
-        rawFingers[i] = ANALOG_MAX - rawFingers[i];
-    }
-    #endif
-
     #if ENABLE_MEDIAN_FILTER
     for (int i = 0; i < 2 * NUM_FINGERS; i++)
     {

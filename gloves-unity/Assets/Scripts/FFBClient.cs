@@ -5,14 +5,33 @@ using Valve.VR.InteractionSystem;
 public class FFBClient : MonoBehaviour
 {
     private FFBManager _ffbManager;
+    private ObjectToggles objectToggle;
     private void Awake()
     {
         _ffbManager = GameObject.FindObjectOfType<FFBManager>();
+        objectToggle = GetComponent<ObjectToggles>();
     }
 
-    private void OnHandHoverBegin(Hand hand)
+    private void OnAttachedToHand(Hand hand)
     {
-        Debug.Log("Received Hand hover event");
+        Debug.Log("Received Hand attached event");
+
+        FFBOnAttach(hand);
+        TFBOnAttach(hand);
+        HFBOnAttach(hand);
+    }
+
+    private void OnDetachedFromHand(Hand hand)
+    {
+        Debug.Log("Received Hand detach event");
+
+        FFBOnDetach(hand);
+        TFBOnDetach(hand);
+        HFBOnDetach(hand);
+    }
+
+    private void FFBOnAttach(Hand hand)
+    {
         SteamVR_Skeleton_Pose_Hand skeletonPoseHand;
         if (hand.handType == SteamVR_Input_Sources.LeftHand)
         {
@@ -26,23 +45,12 @@ public class FFBClient : MonoBehaviour
         _ffbManager.SetForceFeedbackFromSkeleton(hand, skeletonPoseHand);
     }
 
-    private void OnHandHoverEnd(Hand hand)
+    private void TFBOnAttach(Hand hand)
     {
-        if (!hand.currentAttachedObject)
-        {
-            _ffbManager.RelaxForceFeedback(hand);
-        }
-    }
-
-    private void OnAttachedToHand(Hand hand)
-    {
-        Debug.Log("Received Hand attached event");
-
-        var objectToggle = GetComponent<ObjectToggles>();
         if (objectToggle == null)
             return;
 
-        if(objectToggle.grabbedTemp > 0)
+        if (objectToggle.grabbedTemp > 0)
         {
             if (objectToggle.isHot)
             {
@@ -53,18 +61,26 @@ public class FFBClient : MonoBehaviour
                 _ffbManager.SetThermalFeedbackFromObject(hand, (short)-objectToggle.grabbedTemp);
             }
         }
+    }
 
-        if(objectToggle.grabbedHaptics)
+    private void HFBOnAttach(Hand hand)
+    {
+        if (objectToggle == null)
+            return;
+
+        if (objectToggle.grabbedHaptics)
         {
             _ffbManager.SetHapticFeedbackFromObject(hand, objectToggle.hapticTime);
         }
     }
 
-    private void OnDetachedFromHand(Hand hand)
+    private void FFBOnDetach(Hand hand)
     {
-        Debug.Log("Received Hand detach event");
+        _ffbManager.RelaxForceFeedback(hand);
+    }
 
-        var objectToggle = GetComponent<ObjectToggles>();
+    private void TFBOnDetach(Hand hand)
+    {
         if (objectToggle == null)
             return;
 
@@ -72,10 +88,10 @@ public class FFBClient : MonoBehaviour
         {
             _ffbManager.SetThermalFeedbackFromObject(hand, 0);
         }
+    }
 
-        if (objectToggle.grabbedHaptics)
-        {
-            _ffbManager.SetHapticFeedbackFromObject(hand, 0);
-        }
+    private void HFBOnDetach(Hand hand)
+    {
+        //do nothing for haptics
     }
 }

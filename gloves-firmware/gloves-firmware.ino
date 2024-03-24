@@ -6,14 +6,9 @@
 #define SERIAL_BAUD_RATE 115200
 
 //ANALOG INPUT CONFIG
-#define USING_SPLAY false //whether or not your glove tracks splay. - tracks the side to side "wag" of fingers. Requires 5 more inputs.
-#define FLIP_FLEXION  false  //Flip values from potentiometers (for fingers!) if they are backwards
-#define FLIP_SPLAY true //Flip values for splay
-
+#define FLIP_FLEXION  false  //Flip values (for fingers!) if they are backwards
 #define INVERT_CALIB false
-
 #define FLIP_FORCE_FEEDBACK true
-#define SERVO_SCALING false //dynamic scaling of servo motors
 
 //Select pins for multiplexers, set as needed if using a mux. You can add or remove pins as needed depending on how many select pins your mux needs.
 #define PINS_MUX_SELECT     13,  /*S0 pin*/ \
@@ -23,13 +18,13 @@
 
 #define MUX_INPUT 35  //the input or SIG pin of the multiplexer. This can't be a mux pin.
 
-#define PIN_PINKY     MUX(14) //These 5 are for flexion
+#define PIN_PINKY     MUX(14) //These 5 are for flexion (Cosine)
 #define PIN_RING      MUX(11)
 #define PIN_MIDDLE    MUX(8)
 #define PIN_INDEX     MUX(5)
 #define PIN_THUMB     MUX(2)
 
-#define PIN_PINKY_SECOND     MUX(13) 
+#define PIN_PINKY_SECOND     MUX(13) //These 5 are for flexion (Sine)
 #define PIN_RING_SECOND      MUX(10)
 #define PIN_MIDDLE_SECOND    MUX(7)
 #define PIN_INDEX_SECOND     MUX(4)
@@ -38,22 +33,22 @@
 #define PIN_CALIB     32 //button for recalibration
 #define DEBUG_LED      2
 
-#define PIN_PINKY_SERVO     19  //used for force feedback
+#define PIN_PINKY_SERVO     19 //used for force feedback
 #define PIN_RING_SERVO      18 //^
 #define PIN_MIDDLE_SERVO     5 //^
 #define PIN_INDEX_SERVO     17 //^
 #define PIN_THUMB_SERVO     16 //^
 
-#define PIN_PINKY_HAPTIC     23
-#define PIN_RING_HAPTIC      22
-#define PIN_MIDDLE_HAPTIC    15
-#define PIN_INDEX_HAPTIC     4
+#define PIN_PINKY_HAPTIC     23 //used for haptic feedback
+#define PIN_RING_HAPTIC      22 //^
+#define PIN_MIDDLE_HAPTIC    15 //^
+#define PIN_INDEX_HAPTIC      4 //^
 #define PIN_THUMB_HAPTIC     21
 
-#define PIN_THERMAL_IN1      33
-#define PIN_THERMAL_IN2      25
-#define PIN_THERMAL_ENA      26
-#define THERMAL_PWM_CHANNEL  15
+#define PIN_THERMAL_IN1      33 //used for thermal feedback
+#define PIN_THERMAL_IN2      25 //^
+#define PIN_THERMAL_ENA      26 //^
+#define THERMAL_PWM_CHANNEL  15 //^
 
 #define ALWAYS_CALIBRATING CALIBRATION_LOOPS == -1
 

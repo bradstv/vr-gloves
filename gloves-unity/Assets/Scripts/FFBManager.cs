@@ -13,6 +13,7 @@ using UnityEngine.Events;
 using Valve.VR;
 using Valve.VR.InteractionSystem;
 using static UnityEditor.PlayerSettings;
+using static UnityEngine.GraphicsBuffer;
 
 public class FFBManager : MonoBehaviour
 {
@@ -57,6 +58,8 @@ public class FFBManager : MonoBehaviour
         {
             _ffbProviderRight.SetFFB(input);
         }
+
+        Debug.Log("FFB: " + input.thumbCurl + ", " + input.indexCurl + ", " + input.middleCurl + ", " + input.ringCurl + ", " + input.pinkyCurl);
     }
 
     private void _SetThermalFeedback(Hand hand, VRTFBInput input)
@@ -69,6 +72,8 @@ public class FFBManager : MonoBehaviour
         {
             _ffbProviderRight.SetTFB(input);
         }
+
+        Debug.Log("TFB: " + input.value);
     }
 
     private void _SetHapticFeedback(Hand hand, VRHFBInput input)
@@ -81,6 +86,8 @@ public class FFBManager : MonoBehaviour
         {
             _ffbProviderRight.SetHFB(input);
         }
+
+        Debug.Log("HFB: " + input.thumbHaptic + ", " + input.indexHaptic + ", " + input.middleHaptic + ", " + input.ringHaptic + ", " + input.pinkyHaptic);
     }
 
     //This method (perhaps crudely) estimates the curl of each finger from a skeleton passed in in the skeleton poser.
@@ -148,7 +155,7 @@ public class FFBManager : MonoBehaviour
             //The value we to pass is where 0 is full movement flexibility, so invert.
             fingerCurlAverages[i] = Convert.ToInt16(1000 - (Mathf.FloorToInt(enumerator / fingerCurlValues[i].Count * 1000)));
         }
-        Debug.Log("Set FFB: " + fingerCurlAverages[0] + " " + fingerCurlAverages[1] + " " + fingerCurlAverages[2] + " " + fingerCurlAverages[3] + " " + fingerCurlAverages[4]);
+
         _SetForceFeedback(hand, new VRFFBInput(fingerCurlAverages[0], fingerCurlAverages[1], fingerCurlAverages[2], fingerCurlAverages[3], fingerCurlAverages[4]));
     }
 
@@ -156,7 +163,7 @@ public class FFBManager : MonoBehaviour
     {
         short thermalValue = 0;
         Vector3 position = skeleton.GetBonePosition(0);
-        Collider[] colliders = Physics.OverlapSphere(position, 2.0f);
+        Collider[] colliders = Physics.OverlapSphere(position, 2.5f);
         foreach (Collider collider in colliders)
         {
             var touchedObject = collider.gameObject;
@@ -186,6 +193,8 @@ public class FFBManager : MonoBehaviour
             }
         }
 
+        thermalValue = (short)Mathf.Clamp(thermalValue, -1000, 1000); //ensure final value is within thermal range
+
         if (hand.handType == SteamVR_Input_Sources.LeftHand)
         {
             if(thermalValue != thermalValueLeft)
@@ -212,7 +221,7 @@ public class FFBManager : MonoBehaviour
         for (int i = 0; i < fingerTips.Length; i++)
         {
             Vector3 position = skeleton.GetBonePosition((int)fingerTips[i]);
-            Collider[] colliders = Physics.OverlapSphere(position, 0.05f);
+            Collider[] colliders = Physics.OverlapSphere(position, 0.02f);
             short hapticTime = -1;
             foreach (Collider collider in colliders)
             {
@@ -236,14 +245,14 @@ public class FFBManager : MonoBehaviour
 
             if (hand.handType == SteamVR_Input_Sources.LeftHand)
             {
-                if (fingerHaptics[i] != fingerHapticsLeft[i] && fingerHaptics[i] != 0)
+                if (fingerHaptics[i] != fingerHapticsLeft[i] && fingerHaptics[i] != -1)
                     anyFingerStartedTouching = true;
 
                 fingerHapticsLeft[i] = fingerHaptics[i];
             }
             else
             {
-                if (fingerHaptics[i] != fingerHapticsRight[i] && fingerHaptics[i] != 0)
+                if (fingerHaptics[i] != fingerHapticsRight[i] && fingerHaptics[i] != -1)
                     anyFingerStartedTouching = true;
 
                 fingerHapticsRight[i] = fingerHaptics[i];
@@ -252,7 +261,6 @@ public class FFBManager : MonoBehaviour
 
         if(anyFingerStartedTouching)
         {
-            Debug.Log("Haptics set: " + fingerHaptics[0] + ", " + fingerHaptics[1] + ", " + fingerHaptics[2] + ", " + fingerHaptics[3] + ", " + fingerHaptics[4]);
             _SetHapticFeedback(hand, new VRHFBInput(fingerHaptics[0], fingerHaptics[1], fingerHaptics[2], fingerHaptics[3], fingerHaptics[4]));
         }
     }
@@ -262,11 +270,9 @@ public class FFBManager : MonoBehaviour
         _SetForceFeedback(hand, input);
     }
 
-
     public void RelaxForceFeedback(Hand hand)
     {
-        VRFFBInput input = new VRFFBInput(0, 0, 0, 0, 0);
-        _SetForceFeedback(hand, input);
+        _SetForceFeedback(hand, new VRFFBInput(0, 0, 0, 0, 0));
     }
 
     public void SetThermalFeedbackFromObject(Hand hand, short thermalValue)
@@ -281,17 +287,8 @@ public class FFBManager : MonoBehaviour
 
     private short mapDistance(float distance, float minDistance, float maxDistance, short minValue, short maxValue)
     {
-        if (distance < minDistance)
-        {
-            return minValue;
-        }
-
-        if (distance > maxDistance)
-        {
-            return maxValue;
-        }
-
-        return (short)Mathf.Lerp(minValue, maxValue, Mathf.InverseLerp(minDistance, maxDistance, distance));
+        float mappedValue = (distance - minDistance) / (maxDistance - minDistance) * (maxValue - minValue) + minValue;
+        return (short)Mathf.Clamp(mappedValue, Mathf.Min(minValue, maxValue), Mathf.Max(minValue, maxValue));
     }
 
     public enum HandSkeletonBone : int
@@ -497,7 +494,7 @@ class NamedPipesProvider
     {
         if (forcePipe.IsConnected)
         {
-            Debug.Log("running task");
+            //Debug.Log("running task");
             int size = Marshal.SizeOf(input);
             byte[] arr = new byte[size];
 
@@ -508,7 +505,7 @@ class NamedPipesProvider
 
             forcePipe.Write(arr, 0, size);
 
-            Debug.Log("Sent force feedback message.");
+            //Debug.Log("Sent force feedback message.");
 
             return true;
         }
@@ -520,7 +517,7 @@ class NamedPipesProvider
     {
         if (thermalPipe.IsConnected)
         {
-            Debug.Log("running task");
+            //Debug.Log("running task");
             int size = Marshal.SizeOf(input);
             byte[] arr = new byte[size];
 
@@ -531,7 +528,7 @@ class NamedPipesProvider
 
             thermalPipe.Write(arr, 0, size);
 
-            Debug.Log("Sent thermal feedback message.");
+            //Debug.Log("Sent thermal feedback message.");
 
             return true;
         }
@@ -543,7 +540,7 @@ class NamedPipesProvider
     {
         if (hapticPipe.IsConnected)
         {
-            Debug.Log("running task");
+            //Debug.Log("running task");
             int size = Marshal.SizeOf(input);
             byte[] arr = new byte[size];
 
@@ -554,7 +551,7 @@ class NamedPipesProvider
 
             hapticPipe.Write(arr, 0, size);
 
-            Debug.Log("Sent haptic feedback message.");
+            //Debug.Log("Sent haptic feedback message.");
 
             return true;
         }

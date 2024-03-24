@@ -14,9 +14,6 @@ public class ObjectToggles : MonoBehaviour
     public bool grabbedHaptics = false;
     public short hapticTime = 150;
 
-    
-    
-
     void OnDrawGizmosSelected()
     {
         if(radiusTemp > 0 && (isHot || isCold))

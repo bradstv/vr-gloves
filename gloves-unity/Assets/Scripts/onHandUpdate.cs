@@ -9,7 +9,7 @@ using Valve.VR.InteractionSystem;
 public class onHandUpdate : MonoBehaviour
 {
     public float thermalWaitTime = 1.0f;
-    public float hapticWaitTime = 0.5f;
+    public float hapticWaitTime = 0.150f;
 
     private Hand hand;
     private SteamVR_Behaviour_Skeleton skeleton;
