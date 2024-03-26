@@ -8,28 +8,21 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed;
-
     public Transform orientation;
-    public float groundDrag;
 
     float horizontalInput;
     float verticalInput;
-
     Vector3 moveDirection;
-
-    Rigidbody rb;
+    CharacterController cc;
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true;
+        cc = GetComponent<CharacterController>();
     }
 
     private void Update()
     {
         MyInput();
-        SpeedControl();
-        rb.drag = groundDrag;
     }
 
     private void FixedUpdate()
@@ -48,18 +41,6 @@ public class PlayerMovement : MonoBehaviour
         // calculate movement direction
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
         moveDirection.y = 0f; //no up or down movement
-        rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
-    }
-
-    private void SpeedControl()
-    {
-        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-
-        // limit velocity if needed
-        if (flatVel.magnitude > moveSpeed)
-        {
-            Vector3 limitedVel = flatVel.normalized * moveSpeed;
-            rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
-        }
+        cc.Move(moveDirection.normalized * moveSpeed * Time.fixedDeltaTime);
     }
 }
