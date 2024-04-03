@@ -13,6 +13,7 @@
 #define THUMB_IND 0
 
 #define ANALOG_MAX 4095
+#define GRAB_MIN 3078
 #define SERVO_MAX 144.0f
 
 #define MULTIPLEXER_DELAY   5 //How many microseconds should be delayed between multiplexer reads

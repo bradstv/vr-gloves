@@ -1194,7 +1194,7 @@ MonoBehaviour:
   grabbedTemp: 500
   radiusTemp: 0
   radiusOffset: {x: 0, y: 0, z: 0}
-  radiusHaptics: 1
+  radiusHaptics: 0
   grabbedHaptics: 1
   hapticTime: 150
 --- !u!114 &44619208
@@ -24682,7 +24682,7 @@ CharacterController:
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0.24, y: 0.75, z: -0.21}
+  m_Center: {x: 0, y: 0.75, z: 0}
 --- !u!1 &1899902248
 GameObject:
   m_ObjectHideFlags: 0

@@ -86,7 +86,7 @@ void mapServoLimits(int* parsedServo, float* scaledLimits)
 void mapThermalValue(int* parsedThermal, int* thermalValues)
 {
     int value = abs(parsedThermal[0]);
-    thermalValues[0] = map(value, 0, 1000, 0, 255);
+    thermalValues[0] = map(value, 0, 1000, 0, 150);
 
     if(parsedThermal[0] < 0)
     {

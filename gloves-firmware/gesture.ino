@@ -1,6 +1,6 @@
 bool grabGesture(int *flexion)
 {
-    return (flexion[PINKY_IND] + flexion[RING_IND] + flexion[MIDDLE_IND] + flexion[INDEX_IND]) / 4 <= ANALOG_MAX/2 ? 0:1;
+    return (flexion[PINKY_IND] + flexion[RING_IND] + flexion[MIDDLE_IND] + flexion[INDEX_IND]) / 4 <= 1000 ? 0:1;
 }
 
 bool pinchGesture(int *flexion)
