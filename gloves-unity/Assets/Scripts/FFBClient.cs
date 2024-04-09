@@ -21,16 +21,6 @@ public class FFBClient : MonoBehaviour
         HFBOnAttach(hand);
     }
 
-    private void OnHandHoverEnd(Hand hand)
-    {
-        /*
-        if (!hand.currentAttachedObject)
-        {
-            FFBOnDetach(hand);
-        }
-        */
-    }
-
     private void OnDetachedFromHand(Hand hand)
     {
         Debug.Log("Received Hand detach event");
@@ -86,7 +76,7 @@ public class FFBClient : MonoBehaviour
 
     private void FFBOnDetach(Hand hand)
     {
-        _ffbManager.RelaxForceFeedback(hand);
+        _ffbManager.RelaxForceFeedbackWithDelay(hand, 0.2f);
     }
 
     private void TFBOnDetach(Hand hand)

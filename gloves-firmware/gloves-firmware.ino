@@ -162,13 +162,13 @@ void loop()
         bool grabButton = grabGesture(fingerPos);
         bool pinchButton = pinchGesture(fingerPos);
 
-        int fingerPosCopy[10];
+        int fingerPosCopy[NUM_FINGERS];
         int mutexTimeDone;
         {
             int mutexTime = micros();
             fingerPosLock->lock();
             mutexTimeDone = micros()-mutexTime;
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < NUM_FINGERS; i++)
             {
                 fingerPosCopy[i] = fingerPos[i];
             }

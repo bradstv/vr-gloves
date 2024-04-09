@@ -4,12 +4,7 @@
 #include <RunningMedian.h>
 
 #if ENABLE_MEDIAN_FILTER
-RunningMedian rmSamples[2* NUM_FINGERS] = {
-    RunningMedian(MEDIAN_SAMPLES),
-    RunningMedian(MEDIAN_SAMPLES),
-    RunningMedian(MEDIAN_SAMPLES),
-    RunningMedian(MEDIAN_SAMPLES),
-    RunningMedian(MEDIAN_SAMPLES),
+RunningMedian rmSamples[NUM_FINGERS] = {
     RunningMedian(MEDIAN_SAMPLES),
     RunningMedian(MEDIAN_SAMPLES),
     RunningMedian(MEDIAN_SAMPLES),
@@ -39,9 +34,9 @@ esp_adc_cal_characteristics_t *adc_chars;
 
 byte selectPins[] = {PINS_MUX_SELECT};
 
-int maxFingers[2* NUM_FINGERS] = {0,0,0,0,0,0,0,0,0,0};
-int minFingers[2* NUM_FINGERS] = {ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX};
-int maxTravel[2*NUM_FINGERS] = {ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX};
+int maxFingers[NUM_FINGERS] = {0,0,0,0,0};
+int minFingers[NUM_FINGERS] = {ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX};
+int maxTravel[NUM_FINGERS] = {ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX};
 
 int sinMin[NUM_FINGERS] = {ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX, ANALOG_MAX};
 int sinMax[NUM_FINGERS] = {0,0,0,0,0};
@@ -117,15 +112,12 @@ void getFingerPositions(bool calibrating, bool reset)
                                     sinCosMix(PIN_MIDDLE,PIN_MIDDLE_SECOND,2 ), 
                                     sinCosMix(PIN_RING,  PIN_RING_SECOND,  3 ), 
                                     sinCosMix(PIN_PINKY, PIN_PINKY_SECOND, 4 )};
-
-    int rawFingers[2 * NUM_FINGERS];
-
-    int rawFingersSplay[NUM_FINGERS] = {0,0,0,0,0};
+    
+    int rawFingers[NUM_FINGERS];
     
     for (int i = 0; i < NUM_FINGERS; i++)
     {
         rawFingers[i] = rawFingersFlexion[i];
-        rawFingers[i+NUM_FINGERS] = rawFingersSplay[i];
     }
 
     #if FLIP_FLEXION
@@ -136,7 +128,7 @@ void getFingerPositions(bool calibrating, bool reset)
     #endif
 
     #if ENABLE_MEDIAN_FILTER
-    for (int i = 0; i < 2 * NUM_FINGERS; i++)
+    for (int i = 0; i < NUM_FINGERS; i++)
     {
         rmSamples[i].add( rawFingers[i] );
         rawFingers[i] = rmSamples[i].getMedian();
@@ -146,12 +138,9 @@ void getFingerPositions(bool calibrating, bool reset)
     //reset max and mins as needed
     if (reset)
     {
-        for (int i = 0; i <2 * NUM_FINGERS; i++)
+        for (int i = 0; i < NUM_FINGERS; i++)
         {
-            if (i < NUM_FINGERS)
-            {
-                totalOffset1[i] = 0;
-            }
+            totalOffset1[i] = 0;
             maxFingers[i] = INT_MIN;
             minFingers[i] = INT_MAX;
         }
@@ -160,7 +149,7 @@ void getFingerPositions(bool calibrating, bool reset)
     //if during the calibration sequence, make sure to update max and mins
     if (calibrating)
     {
-        for (int i = 0; i < 2*NUM_FINGERS; i++)
+        for (int i = 0; i < NUM_FINGERS; i++)
         {
             if (rawFingers[i] > maxFingers[i])
             {
@@ -185,7 +174,7 @@ void getFingerPositions(bool calibrating, bool reset)
         }
     }
 
-    for (int i = 0; i<NUM_FINGERS; i++)
+    for (int i = 0; i < NUM_FINGERS; i++)
     {
         if (i == target)
         {
@@ -286,9 +275,9 @@ void saveTravel()
     flags |= 0x01;  // Set bit 0
     EEPROM.write(0x00, flags); // Save clamping saved limits flag
 
-    int addr = 0x01;  // Start address for flexion and splay values
+    int addr = 0x01;  // Start address for flexion values
 
-    for (int i = 0; i < 2*NUM_FINGERS; i++) 
+    for (int i = 0; i < NUM_FINGERS; i++) 
     {
         int diff = maxFingers[i] - minFingers[i]; // Calculate the difference
         EEPROM.put(addr, diff); // Store the difference into the EEPROM at the current address
@@ -346,9 +335,9 @@ void loadTravel()
     byte flags = EEPROM.read(0x00);
     if (!(flags & 0x01)) return; // If clamping saved limits flag is not set, do nothing
 
-    int addr = 0x01;  // Start address for flexion and splay values
+    int addr = 0x01;  // Start address for flexion values
 
-    for (int i = 0; i < 2*NUM_FINGERS; i++) 
+    for (int i = 0; i < NUM_FINGERS; i++) 
     {
         EEPROM.get(addr, maxTravel[i]); // Load the max travel value from the EEPROM at the current address
         addr += sizeof(int); // Increment the address by 4 because we're storing int values

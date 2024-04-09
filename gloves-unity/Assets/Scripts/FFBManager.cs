@@ -268,9 +268,17 @@ public class FFBManager : MonoBehaviour
         _SetForceFeedback(hand, input);
     }
 
+    public void RelaxForceFeedbackWithDelay(Hand hand, float delay)
+    {
+        StartCoroutine(InvokeAfterDelay(() => RelaxForceFeedback(hand), delay));
+    }
+
     public void RelaxForceFeedback(Hand hand)
     {
-        _SetForceFeedback(hand, new VRFFBInput(0, 0, 0, 0, 0));
+        if(hand.currentAttachedObject == null)
+        {
+            _SetForceFeedback(hand, new VRFFBInput(0, 0, 0, 0, 0));
+        }   
     }
 
     public void SetThermalFeedbackFromObject(Hand hand, short thermalValue)
@@ -323,6 +331,12 @@ public class FFBManager : MonoBehaviour
         eBone_Aux_RingFinger,
         eBone_Aux_PinkyFinger,
         eBone_Count
+    }
+
+    private IEnumerator InvokeAfterDelay(Action func, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        func();
     }
 
     private void Stop()
