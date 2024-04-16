@@ -41,9 +41,9 @@
 
 #define PIN_PINKY_HAPTIC     23 //used for haptic feedback
 #define PIN_RING_HAPTIC      22 //^
-#define PIN_MIDDLE_HAPTIC    15 //^
+#define PIN_MIDDLE_HAPTIC    21 //^
 #define PIN_INDEX_HAPTIC      4 //^
-#define PIN_THUMB_HAPTIC     21
+#define PIN_THUMB_HAPTIC     15
 
 #define PIN_THERMAL_IN1      33 //used for thermal feedback
 #define PIN_THERMAL_IN2      25 //^

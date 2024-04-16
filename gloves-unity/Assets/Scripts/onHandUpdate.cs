@@ -50,7 +50,7 @@ public class onHandUpdate : MonoBehaviour
         }
 
         //only set haptics if not holding an object and after specified time
-        if (hand.currentAttachedObject == null && Time.time > hapticTimer + hapticWaitTime)
+        if (!hand.currentAttachedObject && Time.time > hapticTimer + hapticWaitTime)
         {
             _ffbManager.SetHapticFeedbackFromSkeleton(hand, skeleton);
             hapticTimer = Time.time;

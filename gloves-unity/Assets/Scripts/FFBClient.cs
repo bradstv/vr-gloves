@@ -76,7 +76,7 @@ public class FFBClient : MonoBehaviour
 
     private void FFBOnDetach(Hand hand)
     {
-        _ffbManager.RelaxForceFeedbackWithDelay(hand, 0.2f);
+        _ffbManager.RelaxForceFeedbackWithDelay(hand, 0.25f);
     }
 
     private void TFBOnDetach(Hand hand)

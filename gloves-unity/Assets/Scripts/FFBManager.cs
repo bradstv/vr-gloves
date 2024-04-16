@@ -26,6 +26,9 @@ public class FFBManager : MonoBehaviour
     private short[] fingerHapticsLeft = new short[] { -1, -1, -1, -1, -1 };
     private short[] fingerHapticsRight = new short[] { -1, -1, -1, -1, -1 };
 
+    public SteamVR_Skeleton_Pose openHandReference;
+    public SteamVR_Skeleton_Pose closeHandReference;
+
     //Whether to inject the FFBProvider script into all interactable game objects
     public bool injectFfbProvider = true;
     private void Awake()
@@ -41,9 +44,19 @@ public class FFBManager : MonoBehaviour
             {
                 interactable.gameObject.AddComponent<FFBClient>();
             }
+
+            Debug.Log("Injected FFBClient into " + _interactables.Length + " Interactables");
         }
         
-        Debug.Log("Found: " + _interactables.Length + " Interactables");
+        if(!openHandReference)
+        {
+            openHandReference = ((SteamVR_Skeleton_Pose)Resources.Load("ReferencePose_OpenHand"));
+        }
+
+        if (!closeHandReference)
+        {
+            closeHandReference = ((SteamVR_Skeleton_Pose)Resources.Load("ReferencePose_Fist"));
+        }
     }
 
     private void _SetForceFeedback(Hand hand, VRFFBInput input)
@@ -97,13 +110,13 @@ public class FFBManager : MonoBehaviour
 
         if (hand.handType == SteamVR_Input_Sources.LeftHand)
         {
-            openHand = ((SteamVR_Skeleton_Pose)Resources.Load("ReferencePose_OpenHand")).leftHand;
-            closedHand = ((SteamVR_Skeleton_Pose)Resources.Load("ReferencePose_Fist")).leftHand;
+            openHand = openHandReference.leftHand;
+            closedHand = closeHandReference.leftHand;
         }
         else
         {
-            openHand = ((SteamVR_Skeleton_Pose)Resources.Load("ReferencePose_OpenHand")).rightHand;
-            closedHand = ((SteamVR_Skeleton_Pose)Resources.Load("ReferencePose_Fist")).rightHand;
+            openHand = openHandReference.rightHand;
+            closedHand = closeHandReference.rightHand;
         }
 
         List<float>[] fingerCurlValues = new List<float>[5];
@@ -275,7 +288,7 @@ public class FFBManager : MonoBehaviour
 
     public void RelaxForceFeedback(Hand hand)
     {
-        if(hand.currentAttachedObject == null)
+        if(!hand.currentAttachedObject)
         {
             _SetForceFeedback(hand, new VRFFBInput(0, 0, 0, 0, 0));
         }   

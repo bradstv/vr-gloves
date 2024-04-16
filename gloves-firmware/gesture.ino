@@ -10,5 +10,5 @@ bool pinchGesture(int *flexion)
 
 bool triggerGesture(int *flexion)
 {
-    return flexion[INDEX_IND] <= (ANALOG_MAX/2) ? 0:1;
+    return flexion[INDEX_IND] <= (GRAB_MIN) ? 0:1;
 }

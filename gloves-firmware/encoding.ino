@@ -1,7 +1,7 @@
 char* encodeData(int* flexion, bool triggerButton, bool grab, bool pinch)
 {
     static char stringToEncode[75];
-    int trigger = (flexion[1] > ANALOG_MAX/2) ? (flexion[1] - ANALOG_MAX/2) * 2:0;
+    int trigger = (flexion[1] > GRAB_MIN) ? (flexion[1] - GRAB_MIN) * 2:0;
     sprintf(stringToEncode, "A%dB%dC%dD%dE%dP%d%s%s%s\n", 
     flexion[0], flexion[1], flexion[2], flexion[3], flexion[4], 
     trigger, triggerButton?"I":"", grab?"L":"", pinch?"M":"");
